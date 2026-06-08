@@ -1,0 +1,279 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { CalendarDays, Users, Search, ChevronRight } from 'lucide-react'
+import { CAJAMARCA_LANDMARKS } from '@/lib/constants'
+
+const heroImages = [
+  {
+    src: '/images/hero/cajamarca1.jpeg',
+    title: 'Cajamarca, Ciudad Histórica',
+    subtitle: 'Donde la historia colonial y el mundo inca cobran vida',
+  },
+  {
+    src: '/images/hero/cajamarca2.jpeg',
+    title: 'Cultura y Tradición',
+    subtitle: 'Festividades únicas en los Andes del norte peruano',
+  },
+  {
+    src: '/images/hero/cajamarca3.jpeg',
+    title: 'Herencia del Tawantinsuyu',
+    subtitle: 'Explora los tesoros del Imperio Inca desde el hotel',
+  },
+]
+
+export default function Hero() {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [checkin, setCheckin] = useState('')
+  const [checkout, setCheckout] = useState('')
+  const [huespedes, setHuespedes] = useState(2)
+  const router = useRouter()
+  const intervalRef = useRef<NodeJS.Timeout>()
+
+  const today = new Date().toISOString().split('T')[0]
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+
+  useEffect(() => {
+    const t = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+    setCheckin(t)
+    const d = new Date(Date.now() + 2 * 86400000)
+    setCheckout(d.toISOString().split('T')[0])
+  }, [])
+
+  const goToSlide = (idx: number) => {
+    if (idx === activeIndex || isTransitioning) return
+    setIsTransitioning(true)
+    setActiveIndex(idx)
+    setTimeout(() => setIsTransitioning(false), 700)
+
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(() => autoAdvance(), 10000)
+  }
+
+  const autoAdvance = () => {
+    setActiveIndex((i) => {
+      const next = (i + 1) % heroImages.length
+      setIsTransitioning(true)
+      setTimeout(() => setIsTransitioning(false), 700)
+      return next
+    })
+  }
+
+  useEffect(() => {
+    intervalRef.current = setInterval(autoAdvance, 10000)
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  }, [])
+
+  const handleBuscar = () => {
+    const params = new URLSearchParams({
+      checkin: checkin || tomorrow,
+      checkout: checkout || new Date(Date.now() + 2 * 86400000).toISOString().split('T')[0],
+      huespedes: String(huespedes),
+    })
+    router.push(`/habitaciones?${params.toString()}`)
+  }
+
+  return (
+    <section className="relative w-full min-h-screen overflow-hidden flex flex-col">
+      {/* Background images */}
+      {heroImages.map((img, i) => (
+        <div
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            i === activeIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+          }`}
+        >
+          <Image
+            src={img.src}
+            alt={img.title}
+            fill
+            priority={i === 0}
+            className="object-cover"
+            sizes="100vw"
+          />
+        </div>
+      ))}
+
+      {/* Gradient overlay — neutral dark, sin tinte verde */}
+      <div className="absolute inset-0 z-20 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
+      <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+      {/* Content */}
+      <div className="relative z-30 flex-1 flex flex-col justify-between min-h-screen">
+        {/* Main text */}
+        <div className="flex-1 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-[2px] bg-secondary" />
+                <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
+                  Cajamarca, Perú
+                </span>
+              </div>
+              <h1
+                key={activeIndex}
+                className="font-display text-white text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight text-hero animate-slide-up"
+              >
+                {heroImages[activeIndex].title}
+              </h1>
+              <p
+                key={`sub-${activeIndex}`}
+                className="text-white/85 text-lg lg:text-xl mt-4 mb-8 animate-fade-in"
+              >
+                {heroImages[activeIndex].subtitle}
+              </p>
+              <div className="flex flex-col md:flex-row gap-4 md:gap-4 mb-8">
+                <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full w-full md:w-auto">
+                  Ver disponibilidad <ChevronRight size={18} />
+                </a>
+                <a href="/habitaciones" className="border-2 border-white/60 text-white px-6 py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center w-full md:w-auto">
+                  Nuestras suites
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Cajamarca circular thumbnails */}
+        <div className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-5">
+          {/* Outer ring decoration */}
+          <div className="absolute inset-0 -m-8 rounded-full border border-white/10 pointer-events-none" />
+
+          {CAJAMARCA_LANDMARKS.map((landmark, i) => (
+            <button
+              key={landmark.id}
+              onClick={() => goToSlide(i)}
+              className={`group relative transition-all duration-500 ${
+                i === activeIndex
+                  ? 'scale-110'
+                  : 'scale-90 opacity-70 hover:opacity-100 hover:scale-100'
+              }`}
+              title={landmark.nombre}
+            >
+              <div
+                className={`rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'border-secondary w-20 h-20 shadow-gold'
+                    : 'border-white/40 w-16 h-16 hover:border-secondary/70'
+                }`}
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src={landmark.imagenCircle}
+                    alt={landmark.nombre}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                    onError={(e) => {
+                      const t = e.target as HTMLImageElement
+                      t.src = '/images/hotel/entrada.jpeg'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Tooltip */}
+              <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-primary/90 backdrop-blur text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <p className="font-semibold">{landmark.nombre}</p>
+                <p className="text-white/60 text-[10px]">{landmark.descripcion}</p>
+              </div>
+            </button>
+          ))}
+
+          {/* Slide indicators */}
+          <div className="flex gap-2 mt-2">
+            {heroImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goToSlide(i)}
+                className={`rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'w-6 h-2 bg-secondary'
+                    : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile indicators */}
+        <div className="lg:hidden absolute bottom-40 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+          {heroImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goToSlide(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === activeIndex ? 'w-6 h-2 bg-secondary' : 'w-2 h-2 bg-white/40'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Search bar */}
+        <div id="buscar" className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-16">
+          <div className="liquid-glass rounded-2xl p-4 lg:p-5">
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 items-stretch lg:items-end">
+              {/* Check-in */}
+              <div className="w-full min-w-0">
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+                  <CalendarDays size={13} /> Check-in
+                </label>
+                <input
+                  type="date"
+                  value={checkin}
+                  min={today}
+                  onChange={(e) => setCheckin(e.target.value)}
+                  className="block w-full min-w-0 appearance-none px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm"
+                />
+              </div>
+
+              {/* Check-out */}
+              <div className="w-full min-w-0">
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+                  <CalendarDays size={13} /> Check-out
+                </label>
+                <input
+                  type="date"
+                  value={checkout}
+                  min={checkin || today}
+                  onChange={(e) => setCheckout(e.target.value)}
+                  className="block w-full min-w-0 appearance-none px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm"
+                />
+              </div>
+
+              {/* Guests */}
+              <div className="w-full min-w-0">
+                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+                  <Users size={13} /> Huéspedes
+                </label>
+                <select
+                  value={huespedes}
+                  onChange={(e) => setHuespedes(Number(e.target.value))}
+                  className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm [&>option]:bg-primary [&>option]:text-white"
+                >
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                    <option key={n} value={n}>
+                      {n} {n === 1 ? 'persona' : 'personas'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Button */}
+              <button
+                onClick={handleBuscar}
+                className="w-full lg:w-auto bg-secondary hover:bg-secondary-dark text-white font-bold px-8 py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-gold active:scale-[0.98] text-sm"
+              >
+                <Search size={18} />
+                <span>Buscar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
