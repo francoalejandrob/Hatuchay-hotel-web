@@ -5,19 +5,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-
-const navLinks = [
-  { href: '/', label: 'Inicio' },
-  { href: '/habitaciones', label: 'Habitaciones' },
-  { href: '/nosotros', label: 'Nosotros' },
-  { href: '/contacto', label: 'Contacto' },
-]
+import { useLanguage } from '@/lib/LanguageContext'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isLightSection, setIsLightSection] = useState(false)
   const pathname = usePathname()
+  const { lang, toggleLang, t } = useLanguage()
+
+  const navLinks = [
+    { href: '/',            label: t.nav.inicio },
+    { href: '/habitaciones',label: t.nav.habitaciones },
+    { href: '/nosotros',    label: t.nav.nosotros },
+    { href: '/contacto',    label: t.nav.contacto },
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -38,7 +40,6 @@ export default function Header() {
     return () => observer.disconnect()
   }, [pathname])
 
-  // Cierra el menú móvil al cambiar de ruta
   useEffect(() => { setMenuOpen(false) }, [pathname])
 
   const navStyle: React.CSSProperties = !scrolled
@@ -67,6 +68,8 @@ export default function Header() {
         border: '1px solid rgba(255,255,255,0.12)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.08)',
       }
+
+  const isLight = scrolled && isLightSection
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none">
@@ -100,7 +103,7 @@ export default function Header() {
                 className={`text-sm font-medium tracking-wide transition-colors hover:text-secondary whitespace-nowrap ${
                   pathname === link.href
                     ? 'text-secondary'
-                    : scrolled && isLightSection ? 'text-primary/80' : 'text-white/90'
+                    : isLight ? 'text-primary/80' : 'text-white/90'
                 }`}
               >
                 {link.label}
@@ -108,35 +111,69 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* CTA — desktop */}
-          <div className="relative z-10 hidden lg:flex items-center">
+          {/* CTA + language toggle — desktop */}
+          <div className="relative z-10 hidden lg:flex items-center gap-3">
+            {/* Language toggle */}
+            <button
+              onClick={toggleLang}
+              aria-label="Switch language"
+              className={`flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                isLight
+                  ? 'border-primary/25 hover:border-primary/50'
+                  : 'border-white/20 hover:border-white/45'
+              }`}
+            >
+              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>
+                ES
+              </span>
+              <span className={`mx-1 ${isLight ? 'text-primary/25' : 'text-white/25'}`}>|</span>
+              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>
+                EN
+              </span>
+            </button>
+
             <Link
               href="/reservas"
               className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 whitespace-nowrap ${
-                scrolled && isLightSection
+                isLight
                   ? 'text-primary border border-primary/40 hover:bg-primary/10'
                   : 'text-white border border-white/60 hover:border-white hover:bg-white/10'
               }`}
             >
-              Reservar ahora
+              {t.nav.reservar}
             </Link>
           </div>
 
           {/* CTA + hamburger — mobile y tablet (< lg) */}
-          <div className="relative z-10 flex lg:hidden items-center gap-3">
+          <div className="relative z-10 flex lg:hidden items-center gap-2">
+            {/* Language toggle mobile */}
+            <button
+              onClick={toggleLang}
+              aria-label="Switch language"
+              className={`flex items-center text-[10px] font-bold px-2.5 py-1.5 rounded-full border transition-all cursor-pointer ${
+                isLight
+                  ? 'border-primary/25 hover:border-primary/50'
+                  : 'border-white/20 hover:border-white/45'
+              }`}
+            >
+              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>ES</span>
+              <span className={`mx-0.5 ${isLight ? 'text-primary/25' : 'text-white/25'}`}>|</span>
+              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>EN</span>
+            </button>
+
             <Link
               href="/reservas"
-              className={`text-xs font-semibold px-4 py-1.5 rounded-full transition-all whitespace-nowrap ${
-                scrolled && isLightSection
+              className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all whitespace-nowrap ${
+                isLight
                   ? 'text-primary border border-primary/40 hover:bg-primary/10'
                   : 'text-white border border-white/60 hover:bg-white/10'
               }`}
             >
-              Reservar
+              {t.nav.reservarMobile}
             </Link>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className={`p-1.5 rounded-lg transition-colors ${scrolled && isLightSection ? 'text-primary hover:bg-primary/10' : 'text-white hover:bg-white/10'}`}
+              className={`p-1.5 rounded-lg transition-colors ${isLight ? 'text-primary hover:bg-primary/10' : 'text-white hover:bg-white/10'}`}
               aria-label="Menú"
             >
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -182,7 +219,7 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
               className="block text-center text-sm font-semibold text-white bg-secondary hover:bg-secondary-dark px-5 py-3 rounded-full transition-all w-full"
             >
-              Reservar ahora
+              {t.nav.reservar}
             </Link>
           </div>
         </div>

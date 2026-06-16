@@ -177,7 +177,7 @@ export default function SeccionExperiencias() {
             {/* Slide counter */}
             <div className={`exp-anim exp-delay-1 ${animCls} flex items-center gap-4 mb-7`}>
               <span className="block w-10 h-px" style={{ background: `${slide.accent}70` }} />
-              <span className="text-white/45 text-[11px] tracking-[0.18em] font-medium">
+              <span className="text-white/70 text-[11px] tracking-[0.18em] font-medium">
                 {String(idx + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
               </span>
             </div>
@@ -199,7 +199,7 @@ export default function SeccionExperiencias() {
             </p>
 
             {/* Description */}
-            <p className={`exp-anim exp-delay-4 ${animCls} text-white/58 text-sm leading-[1.75] mb-10`}>
+            <p className={`exp-anim exp-delay-4 ${animCls} text-white/90 text-sm leading-[1.75] mb-10`}>
               {slide.description}
             </p>
 
@@ -293,7 +293,7 @@ export default function SeccionExperiencias() {
             </div>
             <span
               className="hidden sm:block text-[11px] uppercase tracking-wider truncate transition-colors duration-300"
-              style={{ color: i === idx ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)' }}
+              style={{ color: i === idx ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)' }}
             >
               {s.title}
             </span>

@@ -1,37 +1,34 @@
-import { Wifi, Coffee, Car, UtensilsCrossed, Phone, MapPin, Thermometer, Clock, Shield, Shirt, Dices, Flame } from 'lucide-react'
+'use client'
 
-const amenidades = [
-  { icon: Wifi,            label: 'WiFi Gratuito',       desc: 'Alta velocidad en toda la propiedad' },
-  { icon: Coffee,          label: 'Desayuno Incluido',   desc: 'Especialidad de la casa, variado cada día' },
-  { icon: UtensilsCrossed, label: 'Cocina Equipada',     desc: 'En cada apartamento' },
-  { icon: Flame,           label: 'Hervidor e Infusiones', desc: 'En todas las habitaciones' },
-  { icon: Phone,           label: 'Recepción 24/7',      desc: 'Atención personalizada' },
-  { icon: MapPin,          label: 'Ubicación Central',   desc: '2 cuadras de la Plaza de Armas' },
-  { icon: Thermometer,     label: 'Agua Caliente 24h',   desc: 'Ducha permanente' },
-  { icon: Clock,           label: 'Check-in Flexible',   desc: 'Coordinamos tu llegada' },
-  { icon: Car,             label: 'Parqueo',             desc: 'Estacionamiento con costo adicional' },
-  { icon: Shield,          label: 'Seguridad',           desc: 'Cámaras y acceso controlado' },
-  { icon: Shirt,           label: 'Lavandería',          desc: 'Servicio disponible bajo solicitud' },
-  { icon: Dices,           label: 'Juegos de Mesa',      desc: 'Para disfrutar en familia' },
+import { Wifi, Coffee, Car, UtensilsCrossed, Phone, MapPin, Thermometer, Clock, Shield, Shirt, Dices, Flame } from 'lucide-react'
+import { useLanguage } from '@/lib/LanguageContext'
+
+const amenidadIcons = [
+  Wifi, Coffee, UtensilsCrossed, Flame,
+  Phone, MapPin, Thermometer, Clock,
+  Car, Shield, Shirt, Dices,
 ]
 
 export default function SeccionAmenidades() {
+  const { t } = useLanguage()
+  const amenidades = amenidadIcons.map((Icon, i) => ({ Icon, ...t.amenidades.items[i] }))
+
   return (
     <section className="section-padding bg-warm" data-navbar-theme="light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <p className="text-secondary font-semibold text-sm tracking-widest uppercase mb-2">Comodidades</p>
+          <p className="text-secondary font-semibold text-sm tracking-widest uppercase mb-2">{t.amenidades.eyebrow}</p>
           <h2 className="font-display text-primary text-4xl lg:text-5xl font-bold">
-            Todo lo que necesitas
+            {t.amenidades.title}
           </h2>
           <div className="divider-gold mx-auto" />
           <p className="text-ink/60 mt-3 max-w-xl mx-auto">
-            Cada detalle pensado para que tu estadía en Cajamarca sea perfecta desde el primer momento.
+            {t.amenidades.description}
           </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
-          {amenidades.map(({ icon: Icon, label, desc }) => (
+          {amenidades.map(({ Icon, label, desc }) => (
             <div
               key={label}
               className="group text-center p-5 rounded-2xl bg-white hover:bg-primary transition-all duration-300 shadow-card hover:shadow-card-hover hover:-translate-y-1"

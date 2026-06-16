@@ -5,23 +5,12 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { CalendarDays, Users, Search, ChevronRight } from 'lucide-react'
 import { CAJAMARCA_LANDMARKS } from '@/lib/constants'
+import { useLanguage } from '@/lib/LanguageContext'
 
-const heroImages = [
-  {
-    src: '/images/hero/cajamarca1.jpeg',
-    title: 'Cajamarca, Ciudad Histórica',
-    subtitle: 'Donde la historia colonial y el mundo inca cobran vida',
-  },
-  {
-    src: '/images/hero/cajamarca2.jpeg',
-    title: 'Tu Hogar en Cajamarca',
-    subtitle: 'Ubicados en el corazón histórico de la ciudad',
-  },
-  {
-    src: '/images/hero/cajamarca3.jpeg',
-    title: 'Herencia del Tawantinsuyu',
-    subtitle: 'Explora los tesoros del Imperio Inca desde el hotel',
-  },
+const heroImageSrcs = [
+  '/images/hero/cajamarca1.jpeg',
+  '/images/hero/cajamarca2.jpeg',
+  '/images/hero/cajamarca3.jpeg',
 ]
 
 export default function Hero() {
@@ -32,9 +21,16 @@ export default function Hero() {
   const [huespedes, setHuespedes] = useState(2)
   const router = useRouter()
   const intervalRef = useRef<NodeJS.Timeout>()
+  const { t } = useLanguage()
 
   const today = new Date().toISOString().split('T')[0]
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+
+  const heroImages = heroImageSrcs.map((src, i) => ({
+    src,
+    title: t.hero.slides[i].title,
+    subtitle: t.hero.slides[i].subtitle,
+  }))
 
   useEffect(() => {
     const t = new Date(Date.now() + 86400000).toISOString().split('T')[0]
@@ -65,6 +61,7 @@ export default function Hero() {
   useEffect(() => {
     intervalRef.current = setInterval(autoAdvance, 10000)
     return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleBuscar = () => {
@@ -97,7 +94,7 @@ export default function Hero() {
         </div>
       ))}
 
-      {/* Gradient overlay — neutral dark, sin tinte verde */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 z-20 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
       <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
@@ -110,11 +107,11 @@ export default function Hero() {
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-[2px] bg-secondary" />
                 <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
-                  Cajamarca, Perú
+                  {t.hero.ubicacion}
                 </span>
               </div>
               <h1
-                key={activeIndex}
+                key={`title-${activeIndex}`}
                 className="font-display text-white text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight text-hero animate-slide-up"
               >
                 {heroImages[activeIndex].title}
@@ -127,10 +124,10 @@ export default function Hero() {
               </p>
               <div className="flex flex-col md:flex-row gap-4 md:gap-4 mb-8">
                 <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full w-full md:w-auto">
-                  Ver disponibilidad <ChevronRight size={18} />
+                  {t.hero.verDisponibilidad} <ChevronRight size={18} />
                 </a>
                 <a href="/habitaciones" className="border-2 border-white/60 text-white px-6 py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center w-full md:w-auto">
-                  Nuestras suites
+                  {t.hero.nuestrasSuites}
                 </a>
               </div>
             </div>
@@ -139,7 +136,6 @@ export default function Hero() {
 
         {/* Right: Cajamarca circular thumbnails */}
         <div className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-5">
-          {/* Outer ring decoration */}
           <div className="absolute inset-0 -m-8 rounded-full border border-white/10 pointer-events-none" />
 
           {CAJAMARCA_LANDMARKS.map((landmark, i) => (
@@ -219,7 +215,7 @@ export default function Hero() {
               {/* Check-in */}
               <div className="w-full min-w-0">
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
-                  <CalendarDays size={13} /> Check-in
+                  <CalendarDays size={13} /> {t.hero.checkin}
                 </label>
                 <input
                   type="date"
@@ -233,7 +229,7 @@ export default function Hero() {
               {/* Check-out */}
               <div className="w-full min-w-0">
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
-                  <CalendarDays size={13} /> Check-out
+                  <CalendarDays size={13} /> {t.hero.checkout}
                 </label>
                 <input
                   type="date"
@@ -247,7 +243,7 @@ export default function Hero() {
               {/* Guests */}
               <div className="w-full min-w-0">
                 <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
-                  <Users size={13} /> Huéspedes
+                  <Users size={13} /> {t.hero.huespedes}
                 </label>
                 <select
                   value={huespedes}
@@ -256,7 +252,7 @@ export default function Hero() {
                 >
                   {[1, 2, 3, 4, 5, 6].map((n) => (
                     <option key={n} value={n}>
-                      {n} {n === 1 ? 'persona' : 'personas'}
+                      {n} {n === 1 ? t.hero.persona : t.hero.personas}
                     </option>
                   ))}
                 </select>
@@ -268,7 +264,7 @@ export default function Hero() {
                 className="w-full lg:w-auto bg-secondary hover:bg-secondary-dark text-white font-bold px-8 py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-gold active:scale-[0.98] text-sm"
               >
                 <Search size={18} />
-                <span>Buscar</span>
+                <span>{t.hero.buscar}</span>
               </button>
             </div>
           </div>

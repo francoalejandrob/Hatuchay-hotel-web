@@ -5,9 +5,13 @@ import Link from 'next/link'
 import { MapPin, Star, Users, Heart, ArrowRight } from 'lucide-react'
 import { useHabitaciones } from '@/lib/useHabitaciones'
 import { formatearPrecio } from '@/lib/utils'
+import { useLanguage } from '@/lib/LanguageContext'
 
 export default function SeccionHabitaciones() {
   const { habitaciones } = useHabitaciones()
+  const { t } = useLanguage()
+  const h = t.habitaciones
+
   return (
     <section className="section-padding bg-white" data-navbar-theme="light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,20 +19,20 @@ export default function SeccionHabitaciones() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-4">
           <div>
-            <p className="text-secondary font-semibold text-sm tracking-widest uppercase mb-2">Nuestras Suites</p>
+            <p className="text-secondary font-semibold text-sm tracking-widest uppercase mb-2">{h.eyebrow}</p>
             <h2 className="font-display text-primary text-4xl lg:text-5xl font-bold">
-              Habitaciones & Apartamentos
+              {h.title}
             </h2>
             <div className="divider-gold" />
             <p className="text-ink/60 mt-3 max-w-lg">
-              Cada espacio diseñado para brindar la comodidad de un hogar con el servicio de un hotel de lujo en el corazón de Cajamarca.
+              {h.description}
             </p>
           </div>
           <Link
             href="/habitaciones"
             className="flex items-center gap-2 text-secondary font-semibold hover:text-primary transition-colors text-sm group whitespace-nowrap"
           >
-            Ver todas las habitaciones
+            {h.verTodas}
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -87,7 +91,9 @@ export default function SeccionHabitaciones() {
                 {/* Capacity */}
                 <div className="flex items-center gap-1.5 text-ink/40 text-xs mb-4">
                   <Users size={11} />
-                  {hab.capacidad === 1 ? '1 huésped' : `Hasta ${hab.capacidad} huéspedes`}
+                  {hab.capacidad === 1
+                    ? `1 ${h.huesped}`
+                    : `${h.hasta} ${hab.capacidad} ${h.huespedes}`}
                   <span className="mx-1">·</span>
                   <span className="capitalize">{hab.tipo}</span>
                 </div>
@@ -96,10 +102,10 @@ export default function SeccionHabitaciones() {
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div>
                     <span className="text-secondary font-bold text-base">{formatearPrecio(hab.precio_por_noche)}</span>
-                    <span className="text-ink/40 text-xs"> /noche</span>
+                    <span className="text-ink/40 text-xs">{h.noche}</span>
                   </div>
                   <span className="bg-secondary hover:bg-secondary-dark text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors">
-                    Reservar
+                    {h.reservar}
                   </span>
                 </div>
               </div>

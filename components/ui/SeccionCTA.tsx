@@ -1,8 +1,16 @@
+'use client'
+
 import Link from 'next/link'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { HOTEL } from '@/lib/constants'
+import { useLanguage } from '@/lib/LanguageContext'
 
 export default function SeccionCTA() {
+  const { t } = useLanguage()
+  const c = t.cta
+
+  const waUrl = `https://wa.me/${HOTEL.whatsapp.replace(/\s/g, '').replace('+', '')}?text=${encodeURIComponent(c.waMessage)}`
+
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Fondo: verde puro con profundidad radial */}
@@ -24,15 +32,17 @@ export default function SeccionCTA() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p className="text-secondary font-semibold text-sm tracking-widest uppercase mb-4">
-          Reserva Directa
+          {c.eyebrow}
         </p>
 
         <h2 className="font-display text-white text-4xl lg:text-5xl font-bold mb-5 leading-tight">
-          ¿Listo para vivir<br />la experiencia Hatuchay Inka?
+          {c.title.split('\n').map((line, i) => (
+            <span key={i}>{line}{i === 0 && <br />}</span>
+          ))}
         </h2>
 
         <p className="text-white/55 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-          Reserva directamente con nosotros y obtén el mejor precio garantizado. Sin comisiones adicionales.
+          {c.description}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -40,21 +50,21 @@ export default function SeccionCTA() {
             href="/reservas"
             className="flex items-center justify-center gap-2 bg-secondary hover:bg-secondary-dark text-white font-bold px-8 py-4 rounded-full text-base transition-all hover:shadow-gold active:scale-95"
           >
-            Reservar ahora <ArrowRight size={19} />
+            {c.reservar} <ArrowRight size={19} />
           </Link>
 
           <a
-            href={`https://wa.me/${HOTEL.whatsapp.replace(/\s/g, '').replace('+', '')}?text=Hola! Me interesa reservar en Hatuchay Inka Apart Hotel.`}
+            href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-glass flex items-center justify-center gap-2 px-8 py-4 text-base font-bold rounded-full"
           >
-            <MessageCircle size={19} /> Consultar por WhatsApp
+            <MessageCircle size={19} /> {c.whatsapp}
           </a>
         </div>
 
         <p className="text-white/25 text-sm mt-8">
-          También puedes llamarnos al {HOTEL.telefono} · Recepción 24/7
+          {c.llamar} {HOTEL.telefono} · {c.recepcion}
         </p>
       </div>
     </section>
