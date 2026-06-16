@@ -245,7 +245,7 @@ export default function SeccionExperiencias() {
               src={slide.imageUrl}
               alt={slide.title}
               fill
-              quality={100}
+              quality={82}
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 56vw"
               onError={(e) => {
