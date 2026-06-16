@@ -14,8 +14,8 @@ const heroImages = [
   },
   {
     src: '/images/hero/cajamarca2.jpeg',
-    title: 'Cultura y Tradición',
-    subtitle: 'Festividades únicas en los Andes del norte peruano',
+    title: 'Tu Hogar en Cajamarca',
+    subtitle: 'Ubicados en el corazón histórico de la ciudad',
   },
   {
     src: '/images/hero/cajamarca3.jpeg',
