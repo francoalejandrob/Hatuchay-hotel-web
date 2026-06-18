@@ -105,8 +105,8 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-30 flex-1 flex flex-col justify-between min-h-screen">
         {/* Main text */}
-        <div className="flex-1 flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-16 sm:pt-24">
+        <div className="flex-1 flex items-start lg:items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 sm:pt-24">
             <div className="max-w-[78%] sm:max-w-2xl">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <div className="w-8 h-[2px] bg-secondary" />
