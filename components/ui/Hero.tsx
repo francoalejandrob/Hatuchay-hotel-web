@@ -107,7 +107,7 @@ export default function Hero() {
         {/* Main text */}
         <div className="flex-1 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-16 sm:pt-24">
-            <div className="max-w-2xl">
+            <div className="max-w-[78%] sm:max-w-2xl">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <div className="w-8 h-[2px] bg-secondary" />
                 <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
@@ -126,11 +126,11 @@ export default function Hero() {
               >
                 {heroImages[activeIndex].subtitle}
               </p>
-              <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-5 sm:mb-8">
-                <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full w-full md:w-auto">
+              <div className="flex flex-col items-start md:flex-row md:items-center gap-3 md:gap-4 mb-5 sm:mb-8">
+                <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full px-5 sm:px-6">
                   {t.hero.verDisponibilidad} <ChevronRight size={18} />
                 </a>
-                <a href="/habitaciones" className="border-2 border-white/60 text-white px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center w-full md:w-auto">
+                <a href="/habitaciones" className="border-2 border-white/60 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center">
                   {t.hero.nuestrasSuites}
                 </a>
               </div>
