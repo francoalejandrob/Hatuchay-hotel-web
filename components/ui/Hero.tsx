@@ -172,7 +172,7 @@ export default function Hero() {
           <div className="liquid-glass rounded-2xl p-3.5 sm:p-4 lg:p-5">
             <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:flex lg:flex-row lg:gap-4 lg:items-end">
               {/* Check-in */}
-              <div className="min-w-0">
+              <div className="min-w-0 lg:flex-1">
                 <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <CalendarDays size={13} /> {t.hero.checkin}
                 </label>
@@ -186,7 +186,7 @@ export default function Hero() {
               </div>
 
               {/* Check-out */}
-              <div className="min-w-0">
+              <div className="min-w-0 lg:flex-1">
                 <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <CalendarDays size={13} /> {t.hero.checkout}
                 </label>
@@ -200,7 +200,7 @@ export default function Hero() {
               </div>
 
               {/* Guests */}
-              <div className="min-w-0">
+              <div className="min-w-0 lg:flex-1">
                 <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <Users size={13} /> {t.hero.huespedes}
                 </label>
