@@ -4,7 +4,7 @@ export const HOTEL = {
   slogan: 'Vive Cajamarca desde el corazón histórico',
   telefono: '+51 977 924 242',
   whatsapp: '+51977924242',
-  email: 'reservas@hatuchayinka.com',
+  email: 'eduardo.caballeroelias@hotmail.com',
   direccion: 'Jr. Dos de Mayo 221, Cajamarca 06000, Perú',
   googleMaps: 'https://maps.google.com/?q=Hatuchay+Inka+Apart+Hotel+Cajamarca',
   googleReviews: 'https://g.page/r/hatuchay-inka-cajamarca/review',
