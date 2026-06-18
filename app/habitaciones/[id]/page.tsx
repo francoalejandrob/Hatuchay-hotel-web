@@ -76,7 +76,7 @@ export default function DetalleHabitacionPage() {
             <div className="space-y-3">
               {/* Main image */}
               <div
-                className="relative h-80 lg:h-[480px] rounded-2xl overflow-hidden cursor-pointer group"
+                className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group"
                 onClick={() => setLightbox(imageIdx)}
               >
                 <Image
