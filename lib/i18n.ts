@@ -14,7 +14,8 @@ export const translations = {
       slides: [
         { title: 'Cajamarca, Ciudad Histórica',  subtitle: 'Donde la historia colonial y el mundo inca cobran vida' },
         { title: 'Tu Hogar en Cajamarca',         subtitle: 'Ubicados en el corazón histórico de la ciudad' },
-        { title: 'Herencia del Tawantinsuyu',     subtitle: 'Explora los tesoros del Imperio Inca desde el hotel' },
+        { title: 'Cajamarca al Anochecer',        subtitle: 'Calles empedradas que se iluminan al caer la tarde' },
+        { title: 'Encanto Colonial',              subtitle: 'Techos de teja y rincones pintorescos en cada esquina' },
       ],
       checkin: 'Check-in',
       checkout: 'Check-out',
@@ -122,7 +123,8 @@ export const translations = {
       slides: [
         { title: 'Cajamarca, Historic City',    subtitle: 'Where colonial history and the Inca world come to life' },
         { title: 'Your Home in Cajamarca',      subtitle: 'Located in the heart of the historic city center' },
-        { title: 'Heritage of Tawantinsuyu',    subtitle: 'Explore the treasures of the Inca Empire from the hotel' },
+        { title: 'Cajamarca by Night',          subtitle: 'Cobblestone streets that come alive at dusk' },
+        { title: 'Colonial Charm',              subtitle: 'Tiled rooftops and picturesque corners around every corner' },
       ],
       checkin: 'Check-in',
       checkout: 'Check-out',

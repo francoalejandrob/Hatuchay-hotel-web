@@ -11,7 +11,11 @@ const heroImageSrcs = [
   '/images/hero/cajamarca1.jpeg',
   '/images/hero/cajamarca2.jpeg',
   '/images/hero/cajamarca3.jpeg',
+  '/images/hero/cajamarca4.jpeg',
 ]
+
+// Fotos 3 y 4 son verticales — se ajusta el encuadre para conservar la parte más vistosa al recortar en formato panorámico
+const heroImagePositions = ['center', 'center', '50% 28%', '50% 32%']
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -88,7 +92,9 @@ export default function Hero() {
             alt={img.title}
             fill
             priority={i === 0}
+            quality={92}
             className="object-cover"
+            style={{ objectPosition: heroImagePositions[i] }}
             sizes="100vw"
           />
         </div>
