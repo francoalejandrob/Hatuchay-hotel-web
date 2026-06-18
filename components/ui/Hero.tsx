@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { CalendarDays, Users, Search, ChevronRight } from 'lucide-react'
-import { CAJAMARCA_LANDMARKS } from '@/lib/constants'
 import { useLanguage } from '@/lib/LanguageContext'
 
 const heroImageSrcs = [
@@ -140,65 +139,20 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right: Cajamarca circular thumbnails */}
-        <div className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-5">
-          <div className="absolute inset-0 -m-8 rounded-full border border-white/10 pointer-events-none" />
-
-          {CAJAMARCA_LANDMARKS.map((landmark, i) => (
+        {/* Right: simple vertical slide indicator — desktop only */}
+        <div className="absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-3">
+          {heroImages.map((_, i) => (
             <button
-              key={landmark.id}
+              key={i}
               onClick={() => goToSlide(i)}
-              className={`group relative transition-all duration-500 ${
+              aria-label={`Ir al slide ${i + 1}`}
+              className={`rounded-full transition-all duration-300 ${
                 i === activeIndex
-                  ? 'scale-110'
-                  : 'scale-90 opacity-70 hover:opacity-100 hover:scale-100'
+                  ? 'h-7 w-2 bg-secondary'
+                  : 'h-2 w-2 bg-white/35 hover:bg-white/60'
               }`}
-              title={landmark.nombre}
-            >
-              <div
-                className={`rounded-full overflow-hidden border-2 transition-all duration-300 ${
-                  i === activeIndex
-                    ? 'border-secondary w-20 h-20 shadow-gold'
-                    : 'border-white/40 w-16 h-16 hover:border-secondary/70'
-                }`}
-              >
-                <div className="relative w-full h-full">
-                  <Image
-                    src={landmark.imagenCircle}
-                    alt={landmark.nombre}
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                    onError={(e) => {
-                      const t = e.target as HTMLImageElement
-                      t.src = '/images/hotel/entrada.jpeg'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Tooltip */}
-              <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-primary/90 backdrop-blur text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <p className="font-semibold">{landmark.nombre}</p>
-                <p className="text-white/60 text-[10px]">{landmark.descripcion}</p>
-              </div>
-            </button>
+            />
           ))}
-
-          {/* Slide indicators */}
-          <div className="flex gap-2 mt-2">
-            {heroImages.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goToSlide(i)}
-                className={`rounded-full transition-all duration-300 ${
-                  i === activeIndex
-                    ? 'w-6 h-2 bg-secondary'
-                    : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-                }`}
-              />
-            ))}
-          </div>
         </div>
 
         {/* Mobile indicators */}
