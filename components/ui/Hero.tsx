@@ -106,9 +106,9 @@ export default function Hero() {
       <div className="relative z-30 flex-1 flex flex-col justify-between min-h-screen">
         {/* Main text */}
         <div className="flex-1 flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-16 sm:pt-24">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <div className="w-8 h-[2px] bg-secondary" />
                 <span className="text-secondary text-xs font-semibold tracking-[0.2em] uppercase">
                   {t.hero.ubicacion}
@@ -116,21 +116,21 @@ export default function Hero() {
               </div>
               <h1
                 key={`title-${activeIndex}`}
-                className="font-display text-white text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight text-hero animate-slide-up"
+                className="font-display text-white text-3xl sm:text-5xl lg:text-7xl font-bold leading-tight text-hero animate-slide-up"
               >
                 {heroImages[activeIndex].title}
               </h1>
               <p
                 key={`sub-${activeIndex}`}
-                className="text-white/85 text-lg lg:text-xl mt-4 mb-8 animate-fade-in"
+                className="text-white/85 text-base sm:text-lg lg:text-xl mt-3 mb-5 sm:mt-4 sm:mb-8 animate-fade-in"
               >
                 {heroImages[activeIndex].subtitle}
               </p>
-              <div className="flex flex-col md:flex-row gap-4 md:gap-4 mb-8">
+              <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-5 sm:mb-8">
                 <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full w-full md:w-auto">
                   {t.hero.verDisponibilidad} <ChevronRight size={18} />
                 </a>
-                <a href="/habitaciones" className="border-2 border-white/60 text-white px-6 py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center w-full md:w-auto">
+                <a href="/habitaciones" className="border-2 border-white/60 text-white px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center w-full md:w-auto">
                   {t.hero.nuestrasSuites}
                 </a>
               </div>
@@ -155,7 +155,7 @@ export default function Hero() {
         </div>
 
         {/* Mobile indicators */}
-        <div className="lg:hidden absolute bottom-40 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+        <div className="lg:hidden absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2 z-40">
           {heroImages.map((_, i) => (
             <button
               key={i}
@@ -168,12 +168,12 @@ export default function Hero() {
         </div>
 
         {/* Search bar */}
-        <div id="buscar" className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-16">
-          <div className="liquid-glass rounded-2xl p-4 lg:p-5">
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-4 items-stretch lg:items-end">
+        <div id="buscar" className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-10 lg:pb-16">
+          <div className="liquid-glass rounded-2xl p-3.5 sm:p-4 lg:p-5">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:flex lg:flex-row lg:gap-4 lg:items-end">
               {/* Check-in */}
-              <div className="w-full min-w-0">
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+              <div className="min-w-0">
+                <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <CalendarDays size={13} /> {t.hero.checkin}
                 </label>
                 <input
@@ -181,13 +181,13 @@ export default function Hero() {
                   value={checkin}
                   min={today}
                   onChange={(e) => setCheckin(e.target.value)}
-                  className="block w-full min-w-0 appearance-none px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm"
+                  className="block w-full min-w-0 appearance-none px-3 sm:px-4 py-2.5 sm:py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-xs sm:text-sm backdrop-blur-sm"
                 />
               </div>
 
               {/* Check-out */}
-              <div className="w-full min-w-0">
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+              <div className="min-w-0">
+                <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <CalendarDays size={13} /> {t.hero.checkout}
                 </label>
                 <input
@@ -195,19 +195,19 @@ export default function Hero() {
                   value={checkout}
                   min={checkin || today}
                   onChange={(e) => setCheckout(e.target.value)}
-                  className="block w-full min-w-0 appearance-none px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm"
+                  className="block w-full min-w-0 appearance-none px-3 sm:px-4 py-2.5 sm:py-3 border border-white/20 rounded-xl bg-white/15 text-white placeholder-white/50 font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-xs sm:text-sm backdrop-blur-sm"
                 />
               </div>
 
               {/* Guests */}
-              <div className="w-full min-w-0">
-                <label className="flex items-center gap-1.5 text-xs font-semibold text-white/70 uppercase tracking-wide mb-1.5">
+              <div className="min-w-0">
+                <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white/70 uppercase tracking-wide mb-1 sm:mb-1.5">
                   <Users size={13} /> {t.hero.huespedes}
                 </label>
                 <select
                   value={huespedes}
                   onChange={(e) => setHuespedes(Number(e.target.value))}
-                  className="w-full px-4 py-3 border border-white/20 rounded-xl bg-white/15 text-white font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-sm backdrop-blur-sm [&>option]:bg-primary [&>option]:text-white"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-white/20 rounded-xl bg-white/15 text-white font-medium focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 text-xs sm:text-sm backdrop-blur-sm [&>option]:bg-primary [&>option]:text-white"
                 >
                   {[1, 2, 3, 4, 5, 6].map((n) => (
                     <option key={n} value={n}>
@@ -220,9 +220,9 @@ export default function Hero() {
               {/* Button */}
               <button
                 onClick={handleBuscar}
-                className="w-full lg:w-auto bg-secondary hover:bg-secondary-dark text-white font-bold px-8 py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-gold active:scale-[0.98] text-sm"
+                className="self-end min-w-0 lg:w-auto bg-secondary hover:bg-secondary-dark text-white font-bold px-3 sm:px-8 py-2.5 sm:py-3 rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-gold active:scale-[0.98] text-xs sm:text-sm"
               >
-                <Search size={18} />
+                <Search size={16} />
                 <span>{t.hero.buscar}</span>
               </button>
             </div>
