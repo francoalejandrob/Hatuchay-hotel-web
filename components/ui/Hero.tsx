@@ -127,7 +127,7 @@ export default function Hero() {
                 {heroImages[activeIndex].subtitle}
               </p>
               <div className="flex flex-col items-start md:flex-row md:items-center gap-3 md:gap-4 mb-5 sm:mb-8">
-                <a href="#buscar" className="btn-secondary flex items-center justify-center gap-2 rounded-full px-5 sm:px-6">
+                <a href="#buscar" className="hidden md:flex btn-secondary items-center justify-center gap-2 rounded-full px-5 sm:px-6">
                   {t.hero.verDisponibilidad} <ChevronRight size={18} />
                 </a>
                 <a href="/habitaciones" className="border-2 border-white/60 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:border-secondary hover:text-secondary transition-all flex items-center justify-center">
