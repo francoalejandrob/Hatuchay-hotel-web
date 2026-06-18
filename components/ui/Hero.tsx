@@ -8,13 +8,12 @@ import { useLanguage } from '@/lib/LanguageContext'
 
 const heroImageSrcs = [
   '/images/hero/cajamarca1.jpeg',
-  '/images/hero/cajamarca2.jpeg',
-  '/images/hero/cajamarca3.jpeg',
-  '/images/hero/cajamarca4.jpeg',
+  '/images/hero/cajamarca2.png',
+  '/images/hero/cajamarca3.png',
+  '/images/hero/cajamarca4.png',
 ]
 
-// Fotos 3 y 4 son verticales — se ajusta el encuadre para conservar la parte más vistosa al recortar en formato panorámico
-const heroImagePositions = ['center', 'center', '50% 28%', '50% 32%']
+const heroImagePositions = ['center', 'center', 'center', 'center']
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0)
