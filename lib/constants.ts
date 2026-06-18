@@ -79,6 +79,8 @@ export const HABITACIONES_DATA = [
       '/images/habitaciones/105-2.jpg',
       '/images/habitaciones/105-3.jpg',
       '/images/habitaciones/105-4.jpg',
+      '/images/habitaciones/105-5.jpg',
+      '/images/habitaciones/105-6.jpg',
     ],
     amenidades: ['WiFi gratuito', 'TV cable Smart', 'Cocina completa', 'Refrigeradora', 'Microondas', 'Tina de baño', 'Agua caliente 24h', 'Calefacción', 'Closet amplio'],
     disponible: true,
