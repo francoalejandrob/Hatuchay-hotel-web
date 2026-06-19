@@ -29,7 +29,7 @@ function ReservasContent() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [metodoPago, setMetodoPago] = useState<MetodoPago>('niubiz')
+  const [metodoPago, setMetodoPago] = useState<MetodoPago>('yape')
   const [datosCliente, setDatosCliente] = useState<SchemaCliente | null>(null)
   const [copiado, setCopiado] = useState<string | null>(null)
   const [comprobante, setComprobante] = useState<File | null>(null)
@@ -63,7 +63,7 @@ function ReservasContent() {
   }
 
   const procesarPago = async () => {
-    if ((metodoPago === 'yape' || metodoPago === 'transferencia_bancaria') && !comprobante) {
+    if (!comprobante) {
       alert('Por favor sube el comprobante de pago.')
       return
     }
@@ -254,9 +254,8 @@ function ReservasContent() {
                 {/* Method selector */}
                 <div className="bg-white rounded-2xl shadow-card p-6">
                   <h2 className="font-display text-primary text-2xl font-bold mb-5">Método de pago</h2>
-                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {[
-                      { id: 'niubiz' as MetodoPago, label: 'Tarjeta', icon: '💳', sub: 'Visa / MC / Amex' },
                       { id: 'yape' as MetodoPago, label: 'Yape', icon: '📱', sub: 'QR dinámico' },
                       { id: 'transferencia_bancaria' as MetodoPago, label: 'Transferencia', icon: '🏦', sub: 'BCP · BBVA' },
                     ].map((m) => (
@@ -276,24 +275,6 @@ function ReservasContent() {
                     ))}
                   </div>
                 </div>
-
-                {/* Niubiz */}
-                {metodoPago === 'niubiz' && (
-                  <div className="bg-white rounded-2xl shadow-card p-6">
-                    <h3 className="font-semibold text-primary mb-4 flex items-center gap-2">
-                      💳 Pago con Tarjeta — Niubiz
-                    </h3>
-                    <div className="bg-warm rounded-xl p-5 text-center border border-warm-dark">
-                      <p className="text-ink/60 text-sm mb-3">El formulario seguro de Niubiz se cargará al procesar.</p>
-                      <p className="text-ink/40 text-xs">Acepta Visa, Mastercard, American Express y Diners Club</p>
-                      <div className="flex justify-center gap-2 mt-3">
-                        {['VISA', 'MC', 'AMEX'].map((c) => (
-                          <span key={c} className="bg-white border border-warm-dark px-3 py-1 rounded text-xs font-bold text-ink/60">{c}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Yape */}
                 {metodoPago === 'yape' && (
@@ -410,7 +391,7 @@ function ReservasContent() {
                     {loading ? (
                       <><Loader2 size={20} className="animate-spin" /> Procesando...</>
                     ) : (
-                      <>{metodoPago === 'niubiz' ? 'Pagar con tarjeta' : 'Ya realicé el pago'} <ChevronRight size={18} /></>
+                      <>Ya realicé el pago <ChevronRight size={18} /></>
                     )}
                   </button>
                 </div>
