@@ -41,9 +41,9 @@ export function useHabitaciones() {
       .from('habitaciones')
       .select('*')
       .order('codigo')
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          setHabitaciones(data.map(fromRow))
+      .then((result) => {
+        if (result.data && result.data.length > 0) {
+          setHabitaciones(result.data.map(fromRow))
         }
         setLoading(false)
       })

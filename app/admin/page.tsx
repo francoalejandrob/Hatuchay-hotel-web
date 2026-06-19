@@ -42,12 +42,13 @@ export default function AdminPage() {
       .limit(50)
 
     if (data) {
-      setReservas(data as Reserva[])
-      const mesReservas = data.filter((r) => new Date(r.created_at) >= inicioMes)
-      const pendientes = data.filter((r) => r.estado === 'pago_pendiente_verificacion')
+      const reservasTyped = data as Reserva[]
+      setReservas(reservasTyped)
+      const mesReservas = reservasTyped.filter((r) => new Date(r.created_at) >= inicioMes)
+      const pendientes = reservasTyped.filter((r) => r.estado === 'pago_pendiente_verificacion')
       const hoy = new Date()
       const semana = new Date(hoy.getTime() + 7 * 86400000)
-      const checkinsSemana = data.filter((r) => {
+      const checkinsSemana = reservasTyped.filter((r) => {
         const ci = new Date(r.fecha_checkin)
         return ci >= hoy && ci <= semana
       })

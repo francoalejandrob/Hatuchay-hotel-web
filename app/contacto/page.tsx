@@ -11,13 +11,28 @@ export default function ContactoPage() {
   const [mensaje, setMensaje] = useState('')
   const [loading, setLoading] = useState(false)
   const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    setEnviado(true)
-    setLoading(false)
+    setError('')
+    try {
+      const res = await fetch('/api/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, email, asunto, mensaje }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'No se pudo enviar el mensaje.')
+      }
+      setEnviado(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo enviar el mensaje. Intenta de nuevo.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -73,6 +88,12 @@ export default function ContactoPage() {
             ) : (
               <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-card p-8 space-y-5">
                 <h2 className="font-display text-primary text-2xl font-bold">Envíanos un mensaje</h2>
+
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">
+                    {error}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

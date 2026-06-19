@@ -141,6 +141,34 @@ export async function enviarEmailRecordatorio(data: {
   })
 }
 
+export async function enviarEmailContacto(data: {
+  nombre: string
+  email: string
+  asunto: string
+  mensaje: string
+}) {
+  return resend.emails.send({
+    from: process.env.EMAIL_FROM || 'reservas@hatuchayinka.com',
+    to: process.env.NEXT_PUBLIC_HOTEL_EMAIL || 'reservas@hatuchayinka.com',
+    replyTo: data.email,
+    subject: `📩 Nuevo mensaje de contacto — ${data.asunto || 'Sin asunto'}`,
+    html: `
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
+  <div style="background:#1a3a5c;padding:25px;text-align:center">
+    <h1 style="color:#c9a84c;margin:0">Hatuchay Inka Apart Hotel</h1>
+    <p style="color:white;margin:8px 0 0">Nuevo mensaje desde el formulario de contacto</p>
+  </div>
+  <div style="padding:30px">
+    <p><strong>Nombre:</strong> ${data.nombre}</p>
+    <p><strong>Email:</strong> ${data.email}</p>
+    <p><strong>Asunto:</strong> ${data.asunto || 'No especificado'}</p>
+    <p><strong>Mensaje:</strong></p>
+    <p style="background:#f0f7ff;padding:15px;border-radius:8px;white-space:pre-wrap">${data.mensaje}</p>
+  </div>
+</div>`,
+  })
+}
+
 export async function enviarEmailCancelacion(data: {
   email: string
   nombre: string
