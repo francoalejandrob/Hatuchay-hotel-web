@@ -140,6 +140,22 @@ export default function ReservasAdminPage() {
     fetchReservas()
   }
 
+  const confirmarCancelacion = async (r: ReservaDetalle) => {
+    setActionLoading(true)
+    await supabase.from('reservas').update({ estado: 'cancelada', cancelacion_solicitada: false }).eq('id', r.id)
+    setActionLoading(false)
+    setSelected(null)
+    fetchReservas()
+  }
+
+  const descartarSolicitudCancelacion = async (r: ReservaDetalle) => {
+    setActionLoading(true)
+    await supabase.from('reservas').update({ cancelacion_solicitada: false }).eq('id', r.id)
+    setActionLoading(false)
+    setSelected(null)
+    fetchReservas()
+  }
+
   const totalPages = Math.ceil(total / LIMIT)
   const pago = selected?.pagos?.[0]
 
@@ -337,11 +353,12 @@ export default function ReservasAdminPage() {
                     <tr
                       key={r.id}
                       onClick={() => setSelected(r)}
-                      className={`hover:bg-[#f4f3f0]/60 transition-colors cursor-pointer ${isPending ? 'bg-orange-50/40' : ''}`}
+                      className={`hover:bg-[#f4f3f0]/60 transition-colors cursor-pointer ${isPending ? 'bg-orange-50/40' : ''} ${r.cancelacion_solicitada ? 'bg-red-50/40' : ''}`}
                     >
                       <td className="px-4 py-3.5">
                         <span className="font-bold text-primary text-xs">{r.codigo}</span>
                         {isPending && <span className="ml-2 w-2 h-2 rounded-full bg-orange-400 inline-block" />}
+                        {r.cancelacion_solicitada && <span className="ml-2 w-2 h-2 rounded-full bg-red-500 inline-block" title="Cancelación solicitada" />}
                       </td>
                       <td className="px-4 py-3.5">
                         <p className="font-medium text-ink text-sm">{r.cliente?.nombre} {r.cliente?.apellido}</p>
@@ -540,6 +557,28 @@ export default function ReservasAdminPage() {
                 >
                   <Clock size={15} /> Marcar como completada
                 </button>
+              )}
+
+              {selected.cancelacion_solicitada && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
+                  <p className="text-sm font-semibold text-red-700">El huésped solicitó cancelar esta reserva</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => confirmarCancelacion(selected)}
+                      disabled={actionLoading}
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+                    >
+                      Confirmar cancelación
+                    </button>
+                    <button
+                      onClick={() => descartarSolicitudCancelacion(selected)}
+                      disabled={actionLoading}
+                      className="px-4 py-2.5 rounded-xl text-sm border border-gray-200 hover:bg-gray-50 transition-colors text-ink/60"
+                    >
+                      Descartar
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>

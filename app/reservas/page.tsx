@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Check, ChevronRight, Loader2, Upload, Copy } from 'lucide-react'
+import { Check, ChevronRight, Loader2, Upload, Copy, Tag, X } from 'lucide-react'
 import { HABITACIONES_DATA, HOTEL, BANCO } from '@/lib/constants'
 import { formatearPrecio, calcularNoches, formatearFecha, generarCodigoReserva } from '@/lib/utils'
 import type { MetodoPago } from '@/types'
@@ -35,6 +35,10 @@ function ReservasContent() {
   const [comprobante, setComprobante] = useState<File | null>(null)
   const [numOperacion, setNumOperacion] = useState('')
   const [yapeNumero, setYapeNumero] = useState('')
+  const [cuponInput, setCuponInput] = useState('')
+  const [cuponAplicado, setCuponAplicado] = useState<{ codigo: string; descuento: number } | null>(null)
+  const [cuponLoading, setCuponLoading] = useState(false)
+  const [cuponError, setCuponError] = useState('')
 
   const habitacionId = searchParams.get('habitacion_id') || HABITACIONES_DATA[0].id
   const checkin = searchParams.get('checkin') || ''
@@ -44,7 +48,37 @@ function ReservasContent() {
   const habitacion = HABITACIONES_DATA.find((h) => h.id === habitacionId) || HABITACIONES_DATA[0]
   const noches = checkin && checkout ? calcularNoches(checkin, checkout) : 2
   const total = habitacion.precio_por_noche * Math.max(noches, 1)
+  const totalConDescuento = Math.max(total - (cuponAplicado?.descuento ?? 0), 0)
   const codigoReserva = generarCodigoReserva()
+
+  const aplicarCupon = async () => {
+    setCuponError('')
+    setCuponLoading(true)
+    try {
+      const res = await fetch('/api/cupones/validar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo: cuponInput, total }),
+      })
+      const data = await res.json()
+      if (data.valido) {
+        setCuponAplicado({ codigo: cuponInput.trim().toUpperCase(), descuento: data.descuento })
+      } else {
+        setCuponAplicado(null)
+        setCuponError(data.mensaje || 'Cupón no válido.')
+      }
+    } catch {
+      setCuponError('No se pudo validar el cupón. Intenta de nuevo.')
+    } finally {
+      setCuponLoading(false)
+    }
+  }
+
+  const quitarCupon = () => {
+    setCuponAplicado(null)
+    setCuponInput('')
+    setCuponError('')
+  }
 
   const { register, handleSubmit, formState: { errors } } = useForm<SchemaCliente>({
     resolver: zodResolver(schemaCliente),
@@ -86,6 +120,7 @@ function ReservasContent() {
       if (numOperacion) formData.append('num_operacion', numOperacion)
       if (yapeNumero) formData.append('yape_numero', yapeNumero)
       if (comprobante) formData.append('comprobante', comprobante)
+      if (cuponAplicado) formData.append('cupon_codigo', cuponAplicado.codigo)
 
       const res = await fetch('/api/reservas', { method: 'POST', body: formData })
       const data = await res.json()
@@ -276,6 +311,42 @@ function ReservasContent() {
                   </div>
                 </div>
 
+                {/* Cupón de descuento */}
+                <div className="bg-white rounded-2xl shadow-card p-6">
+                  <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                    <Tag size={16} /> Cupón de descuento
+                  </h3>
+                  {cuponAplicado ? (
+                    <div className="flex items-center justify-between gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Check size={16} className="text-green-600" />
+                        <span className="text-sm font-semibold text-green-700">{cuponAplicado.codigo} aplicado — ahorras {formatearPrecio(cuponAplicado.descuento)}</span>
+                      </div>
+                      <button onClick={quitarCupon} className="text-green-700/60 hover:text-green-800 transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        value={cuponInput}
+                        onChange={(e) => setCuponInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && aplicarCupon()}
+                        placeholder="Ingresa tu código"
+                        className="input-hotel flex-1"
+                      />
+                      <button
+                        onClick={aplicarCupon}
+                        disabled={cuponLoading || !cuponInput.trim()}
+                        className="btn-outline rounded-xl px-5 disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {cuponLoading ? <Loader2 size={16} className="animate-spin" /> : 'Aplicar'}
+                      </button>
+                    </div>
+                  )}
+                  {cuponError && <p className="text-red-500 text-xs mt-2">{cuponError}</p>}
+                </div>
+
                 {/* Yape */}
                 {metodoPago === 'yape' && (
                   <div className="bg-white rounded-2xl shadow-card p-6 space-y-4">
@@ -286,7 +357,7 @@ function ReservasContent() {
                       <div className="flex-shrink-0 text-center">
                         <div className="w-40 h-40 bg-warm rounded-xl flex items-center justify-center mx-auto mb-2 border border-warm-dark overflow-hidden">
                           <Image
-                            src={generarQRYapeUrl(total, codigoReserva)}
+                            src={generarQRYapeUrl(totalConDescuento, codigoReserva)}
                             alt="QR Yape"
                             width={200}
                             height={200}
@@ -300,7 +371,7 @@ function ReservasContent() {
                         {[
                           { label: 'Número Yape', value: HOTEL.whatsapp },
                           { label: 'Titular', value: 'Hatuchay Inka Apart Hotel' },
-                          { label: 'Monto', value: formatearPrecio(total) },
+                          { label: 'Monto', value: formatearPrecio(totalConDescuento) },
                           { label: 'Concepto', value: codigoReserva },
                         ].map(({ label, value }) => (
                           <div key={label} className="flex items-center justify-between gap-2 bg-warm rounded-lg px-3 py-2">
@@ -350,7 +421,7 @@ function ReservasContent() {
                         { label: 'CCI', value: BANCO.cci },
                         { label: 'Titular', value: BANCO.titular },
                         { label: 'RUC', value: BANCO.ruc },
-                        { label: 'Monto', value: formatearPrecio(total) },
+                        { label: 'Monto', value: formatearPrecio(totalConDescuento) },
                         { label: 'Concepto', value: `Reserva ${codigoReserva}` },
                       ].map(({ label, value }) => (
                         <div key={label} className="flex items-center justify-between gap-2 bg-warm rounded-lg px-3 py-2.5">
@@ -415,9 +486,21 @@ function ReservasContent() {
                 <div className="flex justify-between"><span className="text-ink/50">Huéspedes</span><span className="font-medium">{numHuespedes}</span></div>
               </div>
               <div className="border-t border-warm-dark mt-4 pt-4">
+                {cuponAplicado && (
+                  <>
+                    <div className="flex justify-between items-center text-sm mb-1.5">
+                      <span className="text-ink/50">Subtotal</span>
+                      <span className="text-ink/50 line-through">{formatearPrecio(total)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm mb-1.5">
+                      <span className="text-green-600">Cupón {cuponAplicado.codigo}</span>
+                      <span className="text-green-600 font-medium">-{formatearPrecio(cuponAplicado.descuento)}</span>
+                    </div>
+                  </>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-primary">Total</span>
-                  <span className="font-display text-2xl font-bold text-primary">{formatearPrecio(total)}</span>
+                  <span className="font-display text-2xl font-bold text-primary">{formatearPrecio(totalConDescuento)}</span>
                 </div>
                 <p className="text-ink/40 text-xs mt-1">Impuestos incluidos</p>
               </div>

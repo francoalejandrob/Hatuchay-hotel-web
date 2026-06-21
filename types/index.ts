@@ -53,6 +53,9 @@ export interface Reserva {
   created_at: string
   cliente?: Cliente
   habitacion?: Habitacion
+  cupon_codigo?: string
+  descuento_aplicado?: number
+  cancelacion_solicitada?: boolean
 }
 
 export interface Pago {

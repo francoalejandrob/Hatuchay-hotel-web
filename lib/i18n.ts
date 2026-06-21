@@ -93,6 +93,8 @@ export const translations = {
         { href: '/reservas',    label: 'Reservar' },
         { href: '/nosotros',    label: 'Nosotros' },
         { href: '/contacto',    label: 'Contacto' },
+        { href: '/mi-reserva',  label: 'Mi Reserva' },
+        { href: '/blog',        label: 'Blog' },
       ],
       servicios: [
         'Desayuno incluido',
@@ -202,6 +204,8 @@ export const translations = {
         { href: '/reservas',    label: 'Book' },
         { href: '/nosotros',    label: 'About' },
         { href: '/contacto',    label: 'Contact' },
+        { href: '/mi-reserva',  label: 'My Booking' },
+        { href: '/blog',        label: 'Blog' },
       ],
       servicios: [
         'Breakfast included',

@@ -4,9 +4,16 @@ import { generarCodigoReserva } from '@/lib/utils'
 import { enviarEmailConfirmacion } from '@/lib/resend'
 import { enviarWhatsApp, mensajeConfirmacion, mensajePagoVerificacion, mensajeAdminPagoPendiente } from '@/lib/twilio'
 import { formatearFecha } from '@/lib/utils'
+import { checkRateLimit } from '@/lib/rateLimit'
+import { validarCupon } from '@/lib/cupones'
 
 export async function POST(req: NextRequest) {
   try {
+    const permitido = await checkRateLimit(req, 'reservas', 8, 15)
+    if (!permitido) {
+      return NextResponse.json({ success: false, error: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' }, { status: 429 })
+    }
+
     const body = await req.formData()
 
     const habitacion_id = body.get('habitacion_id') as string
@@ -24,9 +31,22 @@ export async function POST(req: NextRequest) {
     const notas = body.get('notas') as string
     const num_operacion = body.get('num_operacion') as string
     const comprobante = body.get('comprobante') as File | null
+    const cupon_codigo = body.get('cupon_codigo') as string | null
 
     const supabase = createServerClient()
     const codigo = generarCodigoReserva()
+
+    // Re-validate coupon server-side (never trust the discount sent by the client)
+    let descuentoAplicado = 0
+    let cuponValidado: { id: string; codigo: string } | null = null
+    if (cupon_codigo) {
+      const resultado = await validarCupon(supabase, cupon_codigo, precio_total)
+      if (resultado.valido && resultado.cupon) {
+        descuentoAplicado = resultado.descuento
+        cuponValidado = { id: resultado.cupon.id, codigo: resultado.cupon.codigo }
+      }
+    }
+    const precioFinal = Math.max(precio_total - descuentoAplicado, 0)
 
     // Upsert client
     const { data: clienteData, error: clienteError } = await supabase
@@ -67,9 +87,11 @@ export async function POST(req: NextRequest) {
         fecha_checkout: checkout,
         num_huespedes,
         noches,
-        precio_total,
+        precio_total: precioFinal,
         estado,
         notas,
+        cupon_codigo: cuponValidado?.codigo || null,
+        descuento_aplicado: descuentoAplicado || null,
       })
       .select()
       .single()
@@ -79,9 +101,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Error al crear reserva.' }, { status: 500 })
     }
 
+    if (cuponValidado) {
+      const { data: cuponActual } = await supabase.from('cupones').select('usos_actuales').eq('id', cuponValidado.id).single()
+      await supabase.from('cupones').update({ usos_actuales: (cuponActual?.usos_actuales ?? 0) + 1 }).eq('id', cuponValidado.id)
+    }
+
     await supabase.from('pagos').insert({
       reserva_id: reserva.id,
-      monto: precio_total,
+      monto: precioFinal,
       moneda: 'PEN',
       metodo: metodo_pago,
       estado: esNiubiz ? 'aprobado' : 'pendiente',
@@ -102,7 +129,7 @@ export async function POST(req: NextRequest) {
           checkin: formatearFecha(checkin),
           checkout: formatearFecha(checkout),
           huespedes: num_huespedes,
-          total: precio_total,
+          total: precioFinal,
         }))
       } else {
         await enviarWhatsApp(whatsappNum, mensajePagoVerificacion(metodo_pago))

@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { enviarEmailContacto } from '@/lib/resend'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 export async function POST(req: NextRequest) {
   try {
+    const permitido = await checkRateLimit(req, 'contacto', 5, 10)
+    if (!permitido) {
+      return NextResponse.json({ success: false, error: 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' }, { status: 429 })
+    }
+
     const { nombre, email, asunto, mensaje } = await req.json()
 
     if (!nombre || !email || !mensaje) {
