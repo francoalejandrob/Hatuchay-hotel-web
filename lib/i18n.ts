@@ -12,10 +12,10 @@ export const translations = {
     },
     hero: {
       slides: [
-        { title: 'Cajamarca, Ciudad Histórica',  subtitle: 'Donde la historia colonial y el mundo inca cobran vida' },
-        { title: 'Tu Hogar en Cajamarca',         subtitle: 'Ubicados en el corazón histórico de la ciudad' },
-        { title: 'Cajamarca al Anochecer',        subtitle: 'Calles empedradas que se iluminan al caer la tarde' },
-        { title: 'Encanto Colonial',              subtitle: 'Techos de teja y rincones pintorescos en cada esquina' },
+        { title: 'Cajamarca, Ciudad Histórica',  subtitle: 'Cajamarca Patrimonio histórico y cultural de las Américas' },
+        { title: 'Tu Hogar en Cajamarca',         subtitle: 'Ubicados en pleno centro histórico de la ciudad' },
+        { title: 'Cajamarca al Anochecer',        subtitle: 'Pasea disfrutando de la arquitectura colonial y pre-inca' },
+        { title: 'Encanto Colonial',              subtitle: 'Casonas de piedra tallada y balcones de madera' },
       ],
       checkin: 'Check-in',
       checkout: 'Check-out',
@@ -121,10 +121,10 @@ export const translations = {
     },
     hero: {
       slides: [
-        { title: 'Cajamarca, Historic City',    subtitle: 'Where colonial history and the Inca world come to life' },
-        { title: 'Your Home in Cajamarca',      subtitle: 'Located in the heart of the historic city center' },
-        { title: 'Cajamarca by Night',          subtitle: 'Cobblestone streets that come alive at dusk' },
-        { title: 'Colonial Charm',              subtitle: 'Tiled rooftops and picturesque corners around every corner' },
+        { title: 'Cajamarca, Historic City',    subtitle: 'Historic and cultural heritage of the Americas' },
+        { title: 'Your Home in Cajamarca',      subtitle: 'Located right in the historic center of the city' },
+        { title: 'Cajamarca by Night',          subtitle: 'Stroll and enjoy the colonial and pre-Inca architecture' },
+        { title: 'Colonial Charm',              subtitle: 'Carved stone mansions and wooden balconies' },
       ],
       checkin: 'Check-in',
       checkout: 'Check-out',

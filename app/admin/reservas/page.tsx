@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Search, CheckCircle, XCircle, Clock, X, Eye, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
-import { formatearPrecio, formatearFecha, etiquetaEstado } from '@/lib/utils'
+import { Search, CheckCircle, XCircle, Clock, X, Eye, ChevronLeft, ChevronRight, ExternalLink, Plus, Download } from 'lucide-react'
+import { formatearPrecio, formatearFecha, etiquetaEstado, calcularNoches, generarCodigoReserva } from '@/lib/utils'
+import { HABITACIONES_DATA } from '@/lib/constants'
 import type { Reserva } from '@/types'
 
 const LIMIT = 15
@@ -47,6 +48,25 @@ export default function ReservasAdminPage() {
   const [actionLoading, setActionLoading] = useState(false)
   const [showRejectForm, setShowRejectForm] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
+
+  // Nueva reserva manual
+  const [showNueva, setShowNueva] = useState(false)
+  const [nuevaSaving, setNuevaSaving] = useState(false)
+  const [nuevaError, setNuevaError] = useState('')
+  const [nueva, setNueva] = useState({
+    habitacion_id: HABITACIONES_DATA[0].id,
+    checkin: '',
+    checkout: '',
+    num_huespedes: 2,
+    nombre: '',
+    apellido: '',
+    email: '',
+    whatsapp: '',
+    pais: 'Perú',
+    precio_total: '',
+    estado: 'confirmada',
+    notas: '',
+  })
 
   // Debounce search
   useEffect(() => {
@@ -129,12 +149,138 @@ export default function ReservasAdminPage() {
     setRejectReason('')
   }
 
+  const nuevaNoches = nueva.checkin && nueva.checkout ? Math.max(calcularNoches(nueva.checkin, nueva.checkout), 0) : 0
+  const habNueva = HABITACIONES_DATA.find(h => h.id === nueva.habitacion_id)
+  const nuevaTotalSugerido = habNueva ? habNueva.precio_por_noche * nuevaNoches : 0
+
+  const resetNueva = () => {
+    setNueva({
+      habitacion_id: HABITACIONES_DATA[0].id,
+      checkin: '', checkout: '', num_huespedes: 2,
+      nombre: '', apellido: '', email: '', whatsapp: '', pais: 'Perú',
+      precio_total: '', estado: 'confirmada', notas: '',
+    })
+    setNuevaError('')
+  }
+
+  const crearReservaManual = async () => {
+    setNuevaError('')
+    if (!nueva.checkin || !nueva.checkout || nuevaNoches <= 0) {
+      setNuevaError('Selecciona fechas válidas (check-out posterior a check-in).')
+      return
+    }
+    if (!nueva.nombre || !nueva.apellido || !nueva.email) {
+      setNuevaError('Nombre, apellido y email son obligatorios.')
+      return
+    }
+    setNuevaSaving(true)
+    try {
+      const { data: cliente, error: clienteError } = await supabase
+        .from('clientes')
+        .upsert(
+          { nombre: nueva.nombre, apellido: nueva.apellido, email: nueva.email, whatsapp: nueva.whatsapp, pais: nueva.pais },
+          { onConflict: 'email' }
+        )
+        .select()
+        .single()
+
+      if (clienteError || !cliente) throw new Error(clienteError?.message || 'Error al registrar cliente')
+
+      const codigo = generarCodigoReserva()
+      const total = Number(nueva.precio_total) || nuevaTotalSugerido
+
+      const { data: reserva, error: reservaError } = await supabase
+        .from('reservas')
+        .insert({
+          codigo,
+          cliente_id: cliente.id,
+          habitacion_id: nueva.habitacion_id,
+          fecha_checkin: nueva.checkin,
+          fecha_checkout: nueva.checkout,
+          num_huespedes: nueva.num_huespedes,
+          noches: nuevaNoches,
+          precio_total: total,
+          estado: nueva.estado,
+          notas: nueva.notas || 'Reserva creada manualmente desde el panel admin',
+        })
+        .select()
+        .single()
+
+      if (reservaError || !reserva) throw new Error(reservaError?.message || 'Error al crear la reserva')
+
+      await supabase.from('pagos').insert({
+        reserva_id: reserva.id,
+        monto: total,
+        moneda: 'PEN',
+        metodo: 'manual_admin',
+        estado: nueva.estado === 'confirmada' ? 'aprobado' : 'pendiente',
+      })
+
+      setShowNueva(false)
+      resetNueva()
+      fetchReservas()
+    } catch (e) {
+      setNuevaError(e instanceof Error ? e.message : 'Error inesperado al crear la reserva.')
+    } finally {
+      setNuevaSaving(false)
+    }
+  }
+
+  const exportarCSV = async () => {
+    const { data } = await supabase
+      .from('reservas')
+      .select('*, cliente:clientes(*)')
+      .order('created_at', { ascending: false })
+
+    const filas = (data as ReservaDetalle[]) ?? []
+    const headers = ['Código', 'Huésped', 'Email', 'Habitación', 'Check-in', 'Check-out', 'Noches', 'Huéspedes', 'Total', 'Estado', 'Creada']
+    const escape = (v: string | number) => `"${String(v ?? '').replace(/"/g, '""')}"`
+    const rows = filas.map(r => [
+      r.codigo,
+      `${r.cliente?.nombre ?? ''} ${r.cliente?.apellido ?? ''}`.trim(),
+      r.cliente?.email ?? '',
+      r.habitacion_id,
+      r.fecha_checkin,
+      r.fecha_checkout,
+      r.noches,
+      r.num_huespedes,
+      r.precio_total,
+      etiquetaEstado(r.estado).label,
+      new Date(r.created_at).toLocaleDateString('es-PE'),
+    ].map(escape).join(','))
+
+    const csv = [headers.map(escape).join(','), ...rows].join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `reservas-hatuchay-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary">Reservas</h1>
-        <p className="text-ink/40 text-sm mt-0.5">{total} reserva{total !== 1 ? 's' : ''} encontrada{total !== 1 ? 's' : ''}</p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-primary">Reservas</h1>
+          <p className="text-ink/40 text-sm mt-0.5">{total} reserva{total !== 1 ? 's' : ''} encontrada{total !== 1 ? 's' : ''}</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={exportarCSV}
+            className="flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-ink/60 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Download size={14} /> Exportar CSV
+          </button>
+          <button
+            onClick={() => { resetNueva(); setShowNueva(true) }}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          >
+            <Plus size={14} /> Nueva reserva
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -395,6 +541,135 @@ export default function ReservasAdminPage() {
                   <Clock size={15} /> Marcar como completada
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Nueva reserva manual ── */}
+      {showNueva && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowNueva(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <p className="font-bold text-primary text-base">Nueva reserva manual</p>
+              <button onClick={() => setShowNueva(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-ink/40">
+                <X size={17} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              {nuevaError && (
+                <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-3.5 py-2.5">{nuevaError}</div>
+              )}
+
+              <div>
+                <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Habitación</label>
+                <select
+                  value={nueva.habitacion_id}
+                  onChange={e => setNueva({ ...nueva, habitacion_id: e.target.value })}
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]"
+                >
+                  {HABITACIONES_DATA.map(h => <option key={h.id} value={h.id}>{h.nombre}</option>)}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Check-in</label>
+                  <input type="date" value={nueva.checkin} onChange={e => setNueva({ ...nueva, checkin: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Check-out</label>
+                  <input type="date" value={nueva.checkout} min={nueva.checkin} onChange={e => setNueva({ ...nueva, checkout: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+              </div>
+              {nuevaNoches > 0 && (
+                <p className="text-xs text-ink/40 -mt-2">{nuevaNoches} noche{nuevaNoches !== 1 ? 's' : ''} · sugerido {formatearPrecio(nuevaTotalSugerido)}</p>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Huéspedes</label>
+                  <input type="number" min={1} max={10} value={nueva.num_huespedes}
+                    onChange={e => setNueva({ ...nueva, num_huespedes: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Total (S/)</label>
+                  <input type="number" min={0} step={10} value={nueva.precio_total}
+                    placeholder={String(nuevaTotalSugerido)}
+                    onChange={e => setNueva({ ...nueva, precio_total: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Nombre *</label>
+                  <input value={nueva.nombre} onChange={e => setNueva({ ...nueva, nombre: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Apellido *</label>
+                  <input value={nueva.apellido} onChange={e => setNueva({ ...nueva, apellido: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Email *</label>
+                <input type="email" value={nueva.email} onChange={e => setNueva({ ...nueva, email: e.target.value })}
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">WhatsApp</label>
+                  <input value={nueva.whatsapp} onChange={e => setNueva({ ...nueva, whatsapp: e.target.value })}
+                    placeholder="51999999999"
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">País</label>
+                  <input value={nueva.pais} onChange={e => setNueva({ ...nueva, pais: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Estado inicial</label>
+                <select
+                  value={nueva.estado}
+                  onChange={e => setNueva({ ...nueva, estado: e.target.value })}
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]"
+                >
+                  <option value="confirmada">Confirmada</option>
+                  <option value="pago_pendiente_verificacion">Pago pendiente de verificación</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Notas</label>
+                <textarea value={nueva.notas} onChange={e => setNueva({ ...nueva, notas: e.target.value })}
+                  rows={2} placeholder="Reserva tomada por teléfono, walk-in, etc."
+                  className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9] resize-none" />
+              </div>
+
+              <button
+                onClick={crearReservaManual}
+                disabled={nuevaSaving}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-50"
+              >
+                {nuevaSaving ? 'Creando...' : 'Crear reserva'}
+              </button>
             </div>
           </div>
         </div>

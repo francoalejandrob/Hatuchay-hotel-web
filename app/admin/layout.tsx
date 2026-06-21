@@ -4,13 +4,18 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { LayoutDashboard, CalendarCheck, CalendarOff, Settings2, LogOut, Menu, X, Globe, BarChart2, TrendingUp, BedDouble } from 'lucide-react'
+import { LayoutDashboard, CalendarCheck, CalendarOff, Settings2, LogOut, Menu, X, Globe, BarChart2, TrendingUp, BedDouble, Mail, Users, Star, Ticket, Newspaper } from 'lucide-react'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/reservas', label: 'Reservas', icon: CalendarCheck, exact: false },
   { href: '/admin/disponibilidad', label: 'Disponibilidad', icon: CalendarOff, exact: false },
   { href: '/admin/habitaciones', label: 'Habitaciones', icon: BedDouble, exact: false },
+  { href: '/admin/clientes', label: 'Clientes', icon: Users, exact: false },
+  { href: '/admin/contactos', label: 'Mensajes', icon: Mail, exact: false },
+  { href: '/admin/resenas', label: 'Reseñas', icon: Star, exact: false },
+  { href: '/admin/cupones', label: 'Cupones', icon: Ticket, exact: false },
+  { href: '/admin/blog', label: 'Blog', icon: Newspaper, exact: false },
   { href: '/admin/analiticas', label: 'Analíticas', icon: TrendingUp, exact: false },
   { href: '/admin/configuracion', label: 'Configuración', icon: Settings2, exact: false },
 ]
