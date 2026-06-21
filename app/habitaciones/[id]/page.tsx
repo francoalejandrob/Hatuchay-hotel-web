@@ -7,7 +7,7 @@ import { DayPicker, DateRange } from 'react-day-picker'
 import { es } from 'date-fns/locale'
 import { Users, Star, ChevronLeft, ChevronRight, ArrowRight, Check, CalendarDays, X } from 'lucide-react'
 import { useHabitaciones } from '@/lib/useHabitaciones'
-import { formatearPrecio, calcularNoches, formatearFecha } from '@/lib/utils'
+import { formatearPrecio, calcularNoches, formatearFecha, calcularPrecioPorHuespedes } from '@/lib/utils'
 import 'react-day-picker/dist/style.css'
 
 export default function DetalleHabitacionPage() {
@@ -39,7 +39,8 @@ export default function DetalleHabitacionPage() {
   const noches = dateRange?.from && dateRange?.to
     ? calcularNoches(dateRange.from.toISOString(), dateRange.to.toISOString())
     : 0
-  const total = noches * habitacion.precio_por_noche
+  const precioPorNoche = calcularPrecioPorHuespedes(habitacion, huespedes)
+  const total = noches * precioPorNoche
 
   const handleReservar = () => {
     if (!dateRange?.from || !dateRange?.to) {
@@ -174,7 +175,7 @@ export default function DetalleHabitacionPage() {
             <div className="bg-white rounded-2xl shadow-card-hover p-6 sticky top-24">
               <div className="flex items-baseline justify-between mb-5">
                 <div>
-                  <span className="font-display text-primary text-3xl font-bold">{formatearPrecio(habitacion.precio_por_noche)}</span>
+                  <span className="font-display text-primary text-3xl font-bold">{formatearPrecio(precioPorNoche)}</span>
                   <span className="text-ink/40 text-sm"> / noche</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -232,8 +233,8 @@ export default function DetalleHabitacionPage() {
               {noches > 0 && (
                 <div className="bg-warm rounded-xl p-4 mb-4 text-sm space-y-2">
                   <div className="flex justify-between text-ink/70">
-                    <span>{formatearPrecio(habitacion.precio_por_noche)} × {noches} {noches === 1 ? 'noche' : 'noches'}</span>
-                    <span>{formatearPrecio(habitacion.precio_por_noche * noches)}</span>
+                    <span>{formatearPrecio(precioPorNoche)} × {noches} {noches === 1 ? 'noche' : 'noches'}</span>
+                    <span>{formatearPrecio(total)}</span>
                   </div>
                   <div className="flex justify-between font-bold text-primary border-t border-warm-dark pt-2">
                     <span>Total</span>

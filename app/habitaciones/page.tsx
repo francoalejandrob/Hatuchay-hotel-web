@@ -7,7 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Users, Star, Filter, ArrowRight, Bed, Search, ChevronDown } from 'lucide-react'
 import { useHabitaciones } from '@/lib/useHabitaciones'
-import { formatearPrecio } from '@/lib/utils'
+import { formatearPrecio, precioDesde } from '@/lib/utils'
 
 function HabitacionesContent() {
   const { habitaciones } = useHabitaciones()
@@ -26,7 +26,7 @@ function HabitacionesContent() {
     return habitaciones.filter((h) => {
       if (filtroTipo !== 'todos' && h.tipo !== filtroTipo) return false
       if (h.capacidad < filtroCapacidad) return false
-      if (h.precio_por_noche > filtroPrecioMax) return false
+      if (precioDesde(h) > filtroPrecioMax) return false
       return true
     })
   }, [habitaciones, filtroTipo, filtroCapacidad, filtroPrecioMax])
@@ -201,7 +201,10 @@ function HabitacionesContent() {
 
                     <div className="flex items-center justify-between pt-4 mt-4 border-t border-warm-dark">
                       <div>
-                        <span className="text-2xl font-bold text-primary">{formatearPrecio(hab.precio_por_noche)}</span>
+                        {hab.precios_por_huesped && Object.keys(hab.precios_por_huesped).length > 1 && (
+                          <span className="text-ink/35 text-[10px] block leading-none mb-0.5">Desde</span>
+                        )}
+                        <span className="text-2xl font-bold text-primary">{formatearPrecio(precioDesde(hab))}</span>
                         <span className="text-ink/40 text-sm"> / noche</span>
                       </div>
                       <span className="flex items-center gap-2 bg-primary group-hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all">

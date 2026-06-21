@@ -58,7 +58,8 @@ export const HABITACIONES_DATA = [
     descripcion: 'Amplia suite con vista a la ciudad histórica de Cajamarca. Cuenta con sala de estar, cocina equipada, dormitorio principal y baño privado con agua caliente las 24 horas. Perfecta para parejas o viajeros de negocios que buscan confort y privacidad.',
     tipo: 'suite' as const,
     capacidad: 3,
-    precio_por_noche: 220,
+    precio_por_noche: 140,
+    precios_por_huesped: { 1: 140, 2: 140, 3: 220 } as Record<string, number>,
     imagenes: [
       '/images/habitaciones/102-1.jpg',
       '/images/habitaciones/102-2.jpg',

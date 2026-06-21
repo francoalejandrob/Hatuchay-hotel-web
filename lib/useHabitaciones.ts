@@ -11,6 +11,7 @@ export interface HabitacionData {
   tipo: string
   capacidad: number
   precio_por_noche: number
+  precios_por_huesped?: Record<string, number> | null
   imagenes: string[]
   amenidades: string[]
   disponible: boolean
@@ -24,6 +25,7 @@ function fromRow(row: Record<string, unknown>): HabitacionData {
     tipo: (row.tipo as string) ?? 'suite',
     capacidad: (row.capacidad as number) ?? 2,
     precio_por_noche: Number(row.precio_por_noche ?? 0),
+    precios_por_huesped: (row.precios_por_huesped as Record<string, number>) ?? null,
     imagenes: (row.imagenes as string[]) ?? [],
     amenidades: (row.amenidades as string[]) ?? [],
     disponible: (row.disponible as boolean) ?? true,

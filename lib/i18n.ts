@@ -37,6 +37,7 @@ export const translations = {
       huesped: 'huésped',
       huespedes: 'huéspedes',
       hasta: 'Hasta',
+      desde: 'Desde',
     },
     amenidades: {
       eyebrow: 'Comodidades',
@@ -148,6 +149,7 @@ export const translations = {
       huesped: 'guest',
       huespedes: 'guests',
       hasta: 'Up to',
+      desde: 'From',
     },
     amenidades: {
       eyebrow: 'Amenities',

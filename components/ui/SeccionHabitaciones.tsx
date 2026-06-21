@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, Star, Users, Heart, ArrowRight } from 'lucide-react'
 import { useHabitaciones } from '@/lib/useHabitaciones'
-import { formatearPrecio } from '@/lib/utils'
+import { formatearPrecio, precioDesde } from '@/lib/utils'
 import { useLanguage } from '@/lib/LanguageContext'
 
 export default function SeccionHabitaciones() {
@@ -101,7 +101,10 @@ export default function SeccionHabitaciones() {
                 {/* Price + CTA */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div>
-                    <span className="text-secondary font-bold text-base">{formatearPrecio(hab.precio_por_noche)}</span>
+                    {hab.precios_por_huesped && Object.keys(hab.precios_por_huesped).length > 1 && (
+                      <span className="text-ink/35 text-[10px] block leading-none mb-0.5">{h.desde}</span>
+                    )}
+                    <span className="text-secondary font-bold text-base">{formatearPrecio(precioDesde(hab))}</span>
                     <span className="text-ink/40 text-xs">{h.noche}</span>
                   </div>
                   <span className="bg-secondary hover:bg-secondary-dark text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors">

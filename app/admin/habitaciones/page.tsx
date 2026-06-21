@@ -14,6 +14,7 @@ interface HabEdit {
   tipo: string
   capacidad: number
   precio_por_noche: number
+  precios_por_huesped: Record<string, number> | null
   imagenes: string[]
   amenidades: string[]
   disponible: boolean
@@ -47,6 +48,7 @@ export default function HabitacionesAdminPage() {
         tipo: h.tipo,
         capacidad: h.capacidad,
         precio_por_noche: h.precio_por_noche,
+        precios_por_huesped: (h as { precios_por_huesped?: Record<string, number> }).precios_por_huesped ?? null,
         imagenes: h.imagenes,
         amenidades: h.amenidades,
         disponible: true,
@@ -57,7 +59,7 @@ export default function HabitacionesAdminPage() {
 
   const startEdit = (hab: HabEdit) => {
     setEditingId(hab.codigo)
-    setForm({ ...hab, imagenes: [...hab.imagenes], amenidades: [...hab.amenidades] })
+    setForm({ ...hab, imagenes: [...hab.imagenes], amenidades: [...hab.amenidades], precios_por_huesped: hab.precios_por_huesped ? { ...hab.precios_por_huesped } : null })
     setActiveTab('info')
     setSaved(false)
   }
@@ -75,6 +77,17 @@ export default function HabitacionesAdminPage() {
     setSaved(true)
     fetchHabitaciones()
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  const setPrecioPorHuesped = (n: number, valor: string) => {
+    if (!form) return
+    const tabla = { ...(form.precios_por_huesped ?? {}) }
+    if (valor === '') {
+      delete tabla[n]
+    } else {
+      tabla[n] = Number(valor)
+    }
+    setForm({ ...form, precios_por_huesped: Object.keys(tabla).length > 0 ? tabla : null })
   }
 
   const addAmenidad = () => {
@@ -212,11 +225,37 @@ export default function HabitacionesAdminPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Precio por noche (S/)</label>
+                        <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Precio base por noche (S/)</label>
                         <input type="number" min={0} step={10} value={form.precio_por_noche}
                           onChange={e => setForm({ ...form, precio_por_noche: Number(e.target.value) })}
                           className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]" />
+                        <p className="text-[11px] text-ink/35 mt-1">Se usa si no defines un precio específico por cantidad de huéspedes abajo.</p>
                       </div>
+
+                      <div>
+                        <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">
+                          Precio por cantidad de huéspedes (opcional)
+                        </label>
+                        <p className="text-[11px] text-ink/35 mb-2">Deja vacío un campo para que esa cantidad use el precio base.</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                          {Array.from({ length: form.capacidad }, (_, i) => i + 1).map(n => (
+                            <div key={n}>
+                              <label className="text-[11px] text-ink/45 mb-1 block">{n} {n === 1 ? 'persona' : 'personas'}</label>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink/35 text-sm">S/</span>
+                                <input
+                                  type="number" min={0} step={10}
+                                  value={form.precios_por_huesped?.[n] ?? ''}
+                                  placeholder={String(form.precio_por_noche)}
+                                  onChange={e => setPrecioPorHuesped(n, e.target.value)}
+                                  className="w-full pl-8 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]"
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="flex items-center gap-3 pt-1">
                         <span className="text-sm font-medium text-ink">Disponible para reservas</span>
                         <button onClick={() => setForm({ ...form, disponible: !form.disponible })}

@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Check, ChevronRight, Loader2, Upload, Copy, Tag, X } from 'lucide-react'
 import { HABITACIONES_DATA, HOTEL, BANCO } from '@/lib/constants'
-import { formatearPrecio, calcularNoches, formatearFecha, generarCodigoReserva } from '@/lib/utils'
+import { formatearPrecio, calcularNoches, formatearFecha, generarCodigoReserva, calcularPrecioPorHuespedes } from '@/lib/utils'
 import type { MetodoPago } from '@/types'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -47,7 +47,8 @@ function ReservasContent() {
 
   const habitacion = HABITACIONES_DATA.find((h) => h.id === habitacionId) || HABITACIONES_DATA[0]
   const noches = checkin && checkout ? calcularNoches(checkin, checkout) : 2
-  const total = habitacion.precio_por_noche * Math.max(noches, 1)
+  const precioPorNoche = calcularPrecioPorHuespedes(habitacion, numHuespedes)
+  const total = precioPorNoche * Math.max(noches, 1)
   const totalConDescuento = Math.max(total - (cuponAplicado?.descuento ?? 0), 0)
   const codigoReserva = generarCodigoReserva()
 

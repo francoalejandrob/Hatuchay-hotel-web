@@ -24,6 +24,28 @@ export function generarCodigoReserva(): string {
   return `HTK-${year}-${random}`
 }
 
+export function calcularPrecioPorHuespedes(
+  habitacion: { precio_por_noche: number; precios_por_huesped?: Record<string, number> | null },
+  huespedes: number
+): number {
+  const tabla = habitacion.precios_por_huesped
+  if (!tabla || Object.keys(tabla).length === 0) return habitacion.precio_por_noche
+
+  if (tabla[huespedes] != null) return tabla[huespedes]
+
+  // Si no hay un precio exacto para esa cantidad, usa el tramo definido más cercano por debajo;
+  // si no hay ninguno por debajo, usa el más bajo definido.
+  const tramos = Object.keys(tabla).map(Number).sort((a, b) => a - b)
+  const menor = tramos.filter((n) => n <= huespedes).pop()
+  return tabla[menor ?? tramos[0]] ?? habitacion.precio_por_noche
+}
+
+export function precioDesde(habitacion: { precio_por_noche: number; precios_por_huesped?: Record<string, number> | null }): number {
+  const tabla = habitacion.precios_por_huesped
+  if (!tabla || Object.keys(tabla).length === 0) return habitacion.precio_por_noche
+  return Math.min(...Object.values(tabla))
+}
+
 export function etiquetaEstado(estado: string): { label: string; color: string } {
   const map: Record<string, { label: string; color: string }> = {
     pendiente: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
