@@ -54,10 +54,10 @@ export const CAJAMARCA_LANDMARKS = [
 export const HABITACIONES_DATA = [
   {
     id: '102',
-    nombre: 'Suite 102 — Deluxe',
+    nombre: 'Habitación Doble',
     descripcion: 'Amplia suite con vista a la ciudad histórica de Cajamarca. Cuenta con sala de estar, cocina equipada, dormitorio principal y baño privado con agua caliente las 24 horas. Perfecta para parejas o viajeros de negocios que buscan confort y privacidad.',
     tipo: 'suite' as const,
-    capacidad: 2,
+    capacidad: 3,
     precio_por_noche: 220,
     imagenes: [
       '/images/habitaciones/102-1.jpg',
@@ -69,10 +69,10 @@ export const HABITACIONES_DATA = [
   },
   {
     id: '105',
-    nombre: 'Suite 105 — Superior',
+    nombre: 'Habitación Matrimonial Standard',
     descripcion: 'Lujosa suite de diseño contemporáneo con influencia andina. Dispone de sala-comedor, cocina completa con microondas y refrigeradora, dormitorio doble y baño con tina. Ideal para estadías largas o familias pequeñas.',
     tipo: 'familiar' as const,
-    capacidad: 3,
+    capacidad: 2,
     precio_por_noche: 280,
     imagenes: [
       '/images/habitaciones/105-1.jpg',
@@ -87,10 +87,10 @@ export const HABITACIONES_DATA = [
   },
   {
     id: '106',
-    nombre: 'Apartamento 106 — Familiar',
+    nombre: 'Habitación Familiar',
     descripcion: 'Espacioso apartamento diseñado para familias. Cuenta con dos dormitorios (uno doble y uno twin), sala de estar, comedor y cocina totalmente equipada. El baño incluye ducha de agua caliente permanente y amenidades de cortesía.',
     tipo: 'familiar' as const,
-    capacidad: 4,
+    capacidad: 5,
     precio_por_noche: 350,
     imagenes: [
       '/images/habitaciones/106-1.jpg',
@@ -107,10 +107,10 @@ export const HABITACIONES_DATA = [
   },
   {
     id: '107',
-    nombre: 'Suite Presidencial 107',
+    nombre: 'Suite Deluxe Cama Extra Grande',
     descripcion: 'Nuestra suite más exclusiva, ubicada en el piso superior con panorámica al centro histórico de Cajamarca. Decorada con arte andino local, cuenta con sala-comedor de lujo, cocina gourmet, dormitorio principal con cama king y jacuzzi privado.',
     tipo: 'suite' as const,
-    capacidad: 2,
+    capacidad: 3,
     precio_por_noche: 480,
     imagenes: [
       '/images/habitaciones/107-1.jpg',
