@@ -199,7 +199,7 @@ export default function HabitacionesAdminPage() {
                           <label className="text-xs font-semibold text-ink/40 uppercase tracking-wide mb-1.5 block">Tipo</label>
                           <select value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}
                             className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-secondary bg-[#fafaf9]">
-                            {['suite', 'familiar', 'doble', 'simple'].map(t => (
+                            {['suite', 'familiar', 'doble', 'simple', 'matrimonial'].map(t => (
                               <option key={t} value={t}>{t}</option>
                             ))}
                           </select>

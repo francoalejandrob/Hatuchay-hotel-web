@@ -1,4 +1,4 @@
-export type TipoHabitacion = 'simple' | 'doble' | 'suite' | 'familiar'
+export type TipoHabitacion = 'simple' | 'doble' | 'suite' | 'familiar' | 'matrimonial'
 
 export type EstadoReserva =
   | 'pendiente'
