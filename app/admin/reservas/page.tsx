@@ -19,7 +19,6 @@ const ESTADOS: { value: string; label: string }[] = [
 ]
 
 const METODOS: Record<string, string> = {
-  niubiz: 'Tarjeta (Niubiz)',
   yape: 'Yape',
   transferencia_bancaria: 'Transferencia',
 }

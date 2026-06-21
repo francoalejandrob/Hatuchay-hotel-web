@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { generarCodigoReserva } from '@/lib/utils'
 import { enviarEmailConfirmacion } from '@/lib/resend'
-import { enviarWhatsApp, mensajeConfirmacion, mensajePagoVerificacion, mensajeAdminPagoPendiente } from '@/lib/twilio'
+import { enviarWhatsApp, mensajePagoVerificacion, mensajeAdminPagoPendiente } from '@/lib/twilio'
 import { formatearFecha } from '@/lib/utils'
 import { checkRateLimit } from '@/lib/rateLimit'
 import { validarCupon } from '@/lib/cupones'
@@ -74,8 +74,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const esNiubiz = metodo_pago === 'niubiz'
-    const estado = esNiubiz ? 'confirmada' : 'pago_pendiente_verificacion'
+    const estado = 'pago_pendiente_verificacion'
 
     const { data: reserva, error: reservaError } = await supabase
       .from('reservas')
@@ -111,7 +110,7 @@ export async function POST(req: NextRequest) {
       monto: precioFinal,
       moneda: 'PEN',
       metodo: metodo_pago,
-      estado: esNiubiz ? 'aprobado' : 'pendiente',
+      estado: 'pendiente',
       referencia_externa: num_operacion || null,
       comprobante_url,
     })
@@ -121,28 +120,16 @@ export async function POST(req: NextRequest) {
     const whatsappNum = `+${whatsapp.replace(/\D/g, '')}`
 
     try {
-      if (esNiubiz) {
-        await enviarWhatsApp(whatsappNum, mensajeConfirmacion({
-          nombre: nombreCompleto,
+      await enviarWhatsApp(whatsappNum, mensajePagoVerificacion(metodo_pago))
+      await enviarWhatsApp(
+        process.env.NEXT_PUBLIC_HOTEL_WHATSAPP || '',
+        mensajeAdminPagoPendiente({
           codigo,
-          habitacion: habitacion_id,
-          checkin: formatearFecha(checkin),
-          checkout: formatearFecha(checkout),
-          huespedes: num_huespedes,
-          total: precioFinal,
-        }))
-      } else {
-        await enviarWhatsApp(whatsappNum, mensajePagoVerificacion(metodo_pago))
-        await enviarWhatsApp(
-          process.env.NEXT_PUBLIC_HOTEL_WHATSAPP || '',
-          mensajeAdminPagoPendiente({
-            codigo,
-            cliente: nombreCompleto,
-            metodo: metodo_pago,
-            monto: precio_total,
-          })
-        )
-      }
+          cliente: nombreCompleto,
+          metodo: metodo_pago,
+          monto: precioFinal,
+        })
+      )
 
       // Email
       await enviarEmailConfirmacion({

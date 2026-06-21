@@ -8,7 +8,7 @@ export type EstadoReserva =
   | 'completada'
   | 'pago_rechazado'
 
-export type MetodoPago = 'niubiz' | 'yape' | 'transferencia_bancaria'
+export type MetodoPago = 'yape' | 'transferencia_bancaria'
 
 export type EstadoPago = 'pendiente' | 'aprobado' | 'rechazado' | 'reembolsado'
 
@@ -98,7 +98,6 @@ export interface FormReservaStep2 {
 
 export interface FormReservaStep3 {
   metodo_pago: MetodoPago
-  niubiz_token?: string
   yape_numero?: string
   yape_operacion?: string
   yape_comprobante?: File
