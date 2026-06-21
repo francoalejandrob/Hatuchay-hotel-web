@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Check, ChevronRight, Loader2, Upload, Copy, Tag, X } from 'lucide-react'
@@ -39,6 +39,14 @@ function ReservasContent() {
   const [cuponAplicado, setCuponAplicado] = useState<{ codigo: string; descuento: number } | null>(null)
   const [cuponLoading, setCuponLoading] = useState(false)
   const [cuponError, setCuponError] = useState('')
+  const [yapeQrUrl, setYapeQrUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/configuracion/yape-qr')
+      .then(res => res.json())
+      .then(data => setYapeQrUrl(data.url))
+      .catch(() => {})
+  }, [])
 
   const habitacionId = searchParams.get('habitacion_id') || HABITACIONES_DATA[0].id
   const checkin = searchParams.get('checkin') || ''
@@ -358,11 +366,11 @@ function ReservasContent() {
                       <div className="flex-shrink-0 text-center">
                         <div className="w-40 h-40 bg-warm rounded-xl flex items-center justify-center mx-auto mb-2 border border-warm-dark overflow-hidden">
                           <Image
-                            src={generarQRYapeUrl(totalConDescuento, codigoReserva)}
+                            src={yapeQrUrl || generarQRYapeUrl(totalConDescuento, codigoReserva)}
                             alt="QR Yape"
                             width={200}
                             height={200}
-                            className="w-full h-full object-cover"
+                            className={yapeQrUrl ? 'w-full h-full object-contain p-2' : 'w-full h-full object-cover'}
                             unoptimized
                           />
                         </div>

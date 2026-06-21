@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { HOTEL, BANCO, HABITACIONES_DATA } from '@/lib/constants'
 import { supabase } from '@/lib/supabase'
-import { Save, CheckCircle, Phone, Mail, Building2, BedDouble, Info } from 'lucide-react'
+import { Save, CheckCircle, Phone, Mail, Building2, BedDouble, Info, QrCode, Upload, Trash2 } from 'lucide-react'
 
 interface PrecioEdit {
   id: string
@@ -53,6 +54,54 @@ export default function ConfiguracionPage() {
   )
   const [savingPrecios, setSavingPrecios] = useState(false)
   const [savedPrecios, setSavedPrecios] = useState(false)
+
+  // Yape QR (editable)
+  const [yapeQrUrl, setYapeQrUrl] = useState<string | null>(null)
+  const [loadingQr, setLoadingQr] = useState(true)
+  const [uploadingQr, setUploadingQr] = useState(false)
+  const [savingQr, setSavingQr] = useState(false)
+  const [savedQr, setSavedQr] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('configuracion')
+      .select('valor')
+      .eq('clave', 'yape_qr_url')
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.valor) setYapeQrUrl(data.valor)
+        setLoadingQr(false)
+      })
+  }, [])
+
+  const subirQr = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return
+    const file = e.target.files[0]
+    setUploadingQr(true)
+    const path = `config/yape-qr-${Date.now()}.${file.name.split('.').pop()}`
+    const { data, error } = await supabase.storage.from('habitaciones').upload(path, file)
+    if (!error && data) {
+      const { data: { publicUrl } } = supabase.storage.from('habitaciones').getPublicUrl(path)
+      setYapeQrUrl(publicUrl)
+    } else {
+      alert('Error al subir la imagen. Asegúrate de que el bucket "habitaciones" existe en Supabase Storage.')
+    }
+    setUploadingQr(false)
+    e.target.value = ''
+  }
+
+  const guardarQr = async () => {
+    setSavingQr(true)
+    await supabase.from('configuracion').upsert(
+      { clave: 'yape_qr_url', valor: yapeQrUrl ?? '' },
+      { onConflict: 'clave' }
+    )
+    setSavingQr(false)
+    setSavedQr(true)
+    setTimeout(() => setSavedQr(false), 3000)
+  }
+
+  const quitarQr = () => setYapeQrUrl(null)
 
   const saveContacto = async () => {
     setSavingContacto(true)
@@ -179,6 +228,43 @@ export default function ConfiguracionPage() {
               <SaveButton saving={savingPrecios} saved={savedPrecios} onClick={savePrecios} />
             </div>
           </div>
+        </SectionCard>
+
+        {/* Yape QR */}
+        <SectionCard icon={QrCode} title="Código QR de Yape">
+          <p className="text-xs text-ink/40 mb-4">
+            Sube la imagen de tu QR real de Yape (la que descargas desde tu app, en &quot;Cobrar&quot;). Reemplaza al QR genérico que se mostraba antes en el checkout.
+          </p>
+          {loadingQr ? (
+            <div className="h-40 flex items-center justify-center">
+              <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-start gap-5">
+              <div className="w-40 h-40 rounded-xl border border-gray-200 bg-[#fafaf9] flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                {yapeQrUrl ? (
+                  <Image src={yapeQrUrl} alt="QR Yape" fill className="object-contain" sizes="160px" />
+                ) : (
+                  <QrCode size={32} className="text-ink/20" />
+                )}
+              </div>
+              <div className="flex-1 space-y-3 w-full">
+                <label className={`flex items-center gap-3 px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploadingQr ? 'opacity-50' : 'hover:border-secondary'} border-gray-200`}>
+                  <Upload size={15} className="text-ink/35" />
+                  <span className="text-sm text-ink/55">{uploadingQr ? 'Subiendo...' : 'Subir imagen del QR'}</span>
+                  <input type="file" accept="image/*" onChange={subirQr} disabled={uploadingQr} className="hidden" />
+                </label>
+                <div className="flex items-center justify-between">
+                  {yapeQrUrl ? (
+                    <button onClick={quitarQr} className="flex items-center gap-1.5 text-xs text-ink/40 hover:text-red-500 transition-colors">
+                      <Trash2 size={12} /> Quitar y volver al QR genérico
+                    </button>
+                  ) : <span />}
+                  <SaveButton saving={savingQr} saved={savedQr} onClick={guardarQr} />
+                </div>
+              </div>
+            </div>
+          )}
         </SectionCard>
 
         {/* Bank info */}
