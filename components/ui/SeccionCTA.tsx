@@ -41,7 +41,7 @@ export default function SeccionCTA() {
           ))}
         </h2>
 
-        <p className="text-white/55 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+        <p className="text-white/75 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
           {c.description}
         </p>
 
@@ -63,7 +63,7 @@ export default function SeccionCTA() {
           </a>
         </div>
 
-        <p className="text-white/25 text-sm mt-8">
+        <p className="text-white/55 text-sm mt-8">
           {c.llamar} {HOTEL.telefono} · {c.recepcion}
         </p>
       </div>

@@ -139,31 +139,36 @@ export default function Hero() {
         </div>
 
         {/* Right: simple vertical slide indicator — desktop only */}
-        <div className="absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-3">
+        <div className="absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-1">
           {heroImages.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
               aria-label={`Ir al slide ${i + 1}`}
-              className={`rounded-full transition-all duration-300 ${
+              className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer group"
+            >
+              <span className={`rounded-full transition-all duration-300 pointer-events-none ${
                 i === activeIndex
                   ? 'h-7 w-2 bg-secondary'
-                  : 'h-2 w-2 bg-white/35 hover:bg-white/60'
-              }`}
-            />
+                  : 'h-2 w-2 bg-white/35 group-hover:bg-white/60'
+              }`} />
+            </button>
           ))}
         </div>
 
         {/* Mobile indicators */}
-        <div className="lg:hidden absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+        <div className="lg:hidden absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-0 z-40">
           {heroImages.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
-              className={`rounded-full transition-all duration-300 ${
+              aria-label={`Ir al slide ${i + 1}`}
+              className="flex items-center justify-center w-11 h-11 rounded-full cursor-pointer"
+            >
+              <span className={`rounded-full transition-all duration-300 pointer-events-none ${
                 i === activeIndex ? 'w-6 h-2 bg-secondary' : 'w-2 h-2 bg-white/40'
-              }`}
-            />
+              }`} />
+            </button>
           ))}
         </div>
 

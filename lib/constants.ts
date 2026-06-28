@@ -8,7 +8,7 @@ export const HOTEL = {
   direccion: 'Jr. Dos de Mayo 221, Cajamarca 06000, Perú',
   googleMaps: 'https://maps.google.com/?q=Hatuchay+Inka+Apart+Hotel+Cajamarca',
   googleReviews: 'https://g.page/r/hatuchay-inka-cajamarca/review',
-  instagram: 'https://instagram.com/hatuchayinka',
+  instagram: 'https://www.instagram.com/hatuchay_inka_apart_hotel/',
   facebook: 'https://facebook.com/hatuchayinka',
   tripadvisor: 'https://www.tripadvisor.com/Hotel_Review-g319821-d12034375-Reviews-Hatuchay_Inka_Apart_Hotel',
   checkIn: '14:00',

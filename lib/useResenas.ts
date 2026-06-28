@@ -40,6 +40,7 @@ export function useResenas() {
     supabase
       .from('resenas')
       .select('*')
+      .eq('aprobada', true)
       .order('orden', { ascending: true })
       .then((result) => {
         if (result.data && result.data.length > 0) {

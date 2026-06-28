@@ -13,9 +13,17 @@ export default function PublicShell({ children }: { children: React.ReactNode })
 
   return (
     <LanguageProvider>
+      {!isAdmin && (
+        <a
+          href="#contenido-principal"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold focus:text-sm"
+        >
+          Saltar al contenido principal
+        </a>
+      )}
       {!isAdmin && <Header />}
       {!isAdmin && <Tracker />}
-      <main>{children}</main>
+      <main id="contenido-principal">{children}</main>
       {!isAdmin && <Footer />}
       {!isAdmin && <WhatsAppButton />}
     </LanguageProvider>

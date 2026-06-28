@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Star } from 'lucide-react'
 import { useResenas, type Resena } from '@/lib/useResenas'
 
@@ -30,11 +30,13 @@ function TestimonialsColumn({
   duration?: number
   className?: string
 }) {
+  const prefersReducedMotion = useReducedMotion()
+
   return (
     <div className={`overflow-hidden ${className ?? ''}`}>
       <motion.div
-        animate={{ translateY: '-50%' }}
-        transition={{ duration, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
+        animate={prefersReducedMotion ? {} : { translateY: '-50%' }}
+        transition={prefersReducedMotion ? {} : { duration, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
         className="flex flex-col gap-4"
       >
         {[...Array(2)].fill(null).map((_, pass) => (
@@ -57,13 +59,13 @@ function TestimonialsColumn({
                     ))}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-white/25 leading-none">Booking.com</span>
+                    <span className="text-[10px] text-white/55 leading-none">Booking.com</span>
                     <ScoreBadge score={score} />
                   </div>
                 </div>
 
                 {/* Quote */}
-                <p className="text-white/65 text-sm leading-relaxed mb-4">
+                <p className="text-white/80 text-sm leading-relaxed mb-4">
                   &ldquo;{text}&rdquo;
                 </p>
 
@@ -77,7 +79,7 @@ function TestimonialsColumn({
                   </div>
                   <div className="min-w-0">
                     <p className="text-white font-semibold text-sm leading-5 truncate">{name}</p>
-                    <p className="text-white/35 text-xs leading-5 truncate">{origin} · {date}</p>
+                    <p className="text-white/60 text-xs leading-5 truncate">{origin} · {date}</p>
                   </div>
                 </div>
               </div>
@@ -117,7 +119,7 @@ export default function SeccionReseñas() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true }}
-              className="text-white/40 text-sm mt-4 max-w-lg leading-relaxed"
+              className="text-white/65 text-sm mt-4 max-w-lg leading-relaxed"
             >
               Reseñas reales de huéspedes verificados en Booking.com. Sus palabras reflejan la calidez, la ubicación y los momentos que hacen especial cada estadía en Hatuchay Inka.
             </motion.p>

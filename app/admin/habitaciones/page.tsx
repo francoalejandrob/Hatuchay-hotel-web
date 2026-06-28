@@ -116,14 +116,22 @@ export default function HabitacionesAdminPage() {
     if (!form || !e.target.files?.[0]) return
     const file = e.target.files[0]
     setUploadingPhoto(true)
+
     const path = `${form.codigo}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`
-    const { data, error } = await supabase.storage.from('habitaciones').upload(path, file)
-    if (!error && data) {
-      const { data: { publicUrl } } = supabase.storage.from('habitaciones').getPublicUrl(path)
-      setForm(f => f ? { ...f, imagenes: [...f.imagenes, publicUrl] } : f)
-    } else {
-      alert('Error al subir la foto. Asegúrate de que el bucket "habitaciones" existe en Supabase Storage.')
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('bucket', 'habitaciones')
+    fd.append('path', path)
+
+    try {
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Error desconocido')
+      setForm(f => f ? { ...f, imagenes: [...f.imagenes, json.publicUrl] } : f)
+    } catch (err) {
+      alert(`Error al subir la foto: ${err instanceof Error ? err.message : err}`)
     }
+
     setUploadingPhoto(false)
     e.target.value = ''
   }

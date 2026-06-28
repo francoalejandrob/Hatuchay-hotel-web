@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import { Playfair_Display_SC, Karla } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import PublicShell from '@/components/layout/PublicShell'
@@ -46,13 +46,14 @@ const hotelJsonLd = {
   sameAs: [HOTEL.instagram, HOTEL.facebook, HOTEL.tripadvisor].filter(Boolean),
 }
 
-const playfair = Playfair_Display({
+const playfair = Playfair_Display_SC({
   subsets: ['latin'],
+  weight: ['400', '700'],
   variable: '--font-playfair',
   display: 'swap',
 })
 
-const inter = Inter({
+const karla = Karla({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
@@ -79,7 +80,7 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="es" className={`${playfair.variable} ${karla.variable}`}>
       <body className="font-body bg-warm text-ink antialiased">
 
         {/* Structured data — Hotel schema.org */}

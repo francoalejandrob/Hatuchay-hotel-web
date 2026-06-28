@@ -13,6 +13,14 @@ export function createServerClient() {
   return createClient(url, key)
 }
 
+export const SQL_RESENAS_MIGRATION = `
+-- Ejecutar en Supabase SQL Editor para habilitar aprobación de reseñas públicas
+ALTER TABLE resenas ADD COLUMN IF NOT EXISTS aprobada BOOLEAN DEFAULT true;
+ALTER TABLE resenas ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ DEFAULT NOW();
+-- Marcar todas las reseñas existentes como aprobadas
+UPDATE resenas SET aprobada = true WHERE aprobada IS NULL;
+`
+
 export const SQL_SCHEMA = `
 -- Ejecutar en Supabase SQL Editor
 

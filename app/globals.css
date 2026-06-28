@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
   --font-playfair: 'Playfair Display', serif;
   --font-inter: 'Inter', sans-serif;
@@ -89,13 +87,14 @@ h1, h2, h3, h4 { font-family: var(--font-playfair); }
   border-radius: inherit;
 }
 
-/* Animated shimmer sweep */
+/* Animated shimmer sweep — uses transform for GPU-composited animation (no layout reflow) */
 .liquid-glass::after {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
+  top: 0; left: 0;
   width: 60%;
   height: 100%;
+  transform: translateX(-167%);
   background: linear-gradient(
     105deg,
     transparent 20%,
@@ -109,10 +108,10 @@ h1, h2, h3, h4 { font-family: var(--font-playfair); }
 }
 
 @keyframes glass-shimmer {
-  0%   { left: -60%; opacity: 0; }
+  0%   { transform: translateX(-167%); opacity: 0; }
   10%  { opacity: 1; }
   80%  { opacity: 1; }
-  100% { left: 160%; opacity: 0; }
+  100% { transform: translateX(450%); opacity: 0; }
 }
 
 /* Hover intensifies the glass */
@@ -253,6 +252,18 @@ h1, h2, h3, h4 { font-family: var(--font-playfair); }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
+}
+
+/* ── Reduced motion — respects WCAG 2.1 SC 2.3.3 ────────── */
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass::after { animation: none; }
+  .img-zoom img { transition: none; }
+  .exp-anim,
+  .exp-img-frame { transition: none !important; }
+  .btn-glass,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline { transition: none !important; }
 }
 
 /* ── ElegantCarousel (SeccionExperiencias) ───────────────── */

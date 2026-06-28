@@ -35,7 +35,7 @@ export default function SeccionAmenidades() {
             {t.amenidades.title}
           </h2>
           <div className="divider-gold mx-auto" />
-          <p className="text-ink/60 mt-3 max-w-xl mx-auto">
+          <p className="text-gray-500 mt-3 max-w-xl mx-auto">
             {t.amenidades.description}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function SeccionAmenidades() {
                 <Icon size={30} className="text-primary group-hover:text-secondary transition-colors" />
               </div>
               <p className="font-semibold text-primary group-hover:text-white text-sm mb-1 transition-colors">{label}</p>
-              <p className="text-ink/50 group-hover:text-white/60 text-xs transition-colors">{desc}</p>
+              <p className="text-gray-500 group-hover:text-white/70 text-xs transition-colors">{desc}</p>
             </div>
           ))}
         </div>

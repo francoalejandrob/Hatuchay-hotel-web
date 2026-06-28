@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, Star, Users, Heart, ArrowRight } from 'lucide-react'
+import { MapPin, Star, Users, ArrowRight } from 'lucide-react'
 import { useHabitaciones } from '@/lib/useHabitaciones'
 import { formatearPrecio, precioDesde } from '@/lib/utils'
 import { useLanguage } from '@/lib/LanguageContext'
@@ -24,7 +24,7 @@ export default function SeccionHabitaciones() {
               {h.title}
             </h2>
             <div className="divider-gold" />
-            <p className="text-ink/60 mt-3 max-w-lg">
+            <p className="text-gray-500 mt-3 max-w-lg">
               {h.description}
             </p>
           </div>
@@ -60,20 +60,12 @@ export default function SeccionHabitaciones() {
                   <Star size={11} className="fill-white" />
                   5.0
                 </div>
-
-                {/* Favorite button */}
-                <button
-                  onClick={e => e.preventDefault()}
-                  className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/40 transition-all"
-                >
-                  <Heart size={14} className="text-white" />
-                </button>
               </div>
 
               {/* Content */}
               <div className="p-4 flex flex-col flex-1">
                 {/* Location */}
-                <div className="flex items-center gap-1 text-ink/40 text-xs mb-2">
+                <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
                   <MapPin size={11} />
                   Cajamarca, Perú
                 </div>
@@ -84,12 +76,12 @@ export default function SeccionHabitaciones() {
                 </h3>
 
                 {/* Description */}
-                <p className="text-ink/55 text-xs leading-relaxed mb-3 line-clamp-2 flex-1">
+                <p className="text-gray-500 text-xs leading-relaxed mb-3 line-clamp-2 flex-1">
                   {hab.descripcion}
                 </p>
 
                 {/* Capacity */}
-                <div className="flex items-center gap-1.5 text-ink/40 text-xs mb-4">
+                <div className="flex items-center gap-1.5 text-gray-500 text-xs mb-4">
                   <Users size={11} />
                   {hab.capacidad === 1
                     ? `1 ${h.huesped}`
@@ -105,7 +97,7 @@ export default function SeccionHabitaciones() {
                       <span className="text-ink/35 text-[10px] block leading-none mb-0.5">{h.desde}</span>
                     )}
                     <span className="text-secondary font-bold text-base">{formatearPrecio(precioDesde(hab))}</span>
-                    <span className="text-ink/40 text-xs">{h.noche}</span>
+                    <span className="text-gray-500 text-xs">{h.noche}</span>
                   </div>
                   <span className="bg-secondary hover:bg-secondary-dark text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors">
                     {h.reservar}

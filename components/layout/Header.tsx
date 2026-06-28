@@ -123,11 +123,11 @@ export default function Header() {
                   : 'border-white/20 hover:border-white/45'
               }`}
             >
-              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>
+              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/60' : 'text-white/55'}>
                 ES
               </span>
-              <span className={`mx-1 ${isLight ? 'text-primary/25' : 'text-white/25'}`}>|</span>
-              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>
+              <span className={`mx-1 ${isLight ? 'text-primary/40' : 'text-white/40'}`}>|</span>
+              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/60' : 'text-white/55'}>
                 EN
               </span>
             </button>
@@ -156,14 +156,14 @@ export default function Header() {
                   : 'border-white/20 hover:border-white/45'
               }`}
             >
-              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>ES</span>
-              <span className={`mx-0.5 ${isLight ? 'text-primary/25' : 'text-white/25'}`}>|</span>
-              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/40' : 'text-white/35'}>EN</span>
+              <span className={lang === 'es' ? 'text-secondary' : isLight ? 'text-primary/60' : 'text-white/55'}>ES</span>
+              <span className={`mx-0.5 ${isLight ? 'text-primary/40' : 'text-white/40'}`}>|</span>
+              <span className={lang === 'en' ? 'text-secondary' : isLight ? 'text-primary/60' : 'text-white/55'}>EN</span>
             </button>
 
             <Link
               href="/reservas"
-              className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all whitespace-nowrap ${
+              className={`text-xs font-semibold px-4 py-2.5 rounded-full transition-all whitespace-nowrap min-h-[44px] flex items-center ${
                 isLight
                   ? 'text-primary border border-primary/40 hover:bg-primary/10'
                   : 'text-white border border-white/60 hover:bg-white/10'

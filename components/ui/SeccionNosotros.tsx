@@ -106,7 +106,7 @@ export default function SeccionNosotros() {
             <div className="divider-gold" />
 
             {/* Párrafo 1 */}
-            <p className="text-ink/65 text-[15px] leading-[1.8] mt-4 mb-6">
+            <p className="text-gray-600 text-[15px] leading-[1.8] mt-4 mb-6">
               {n.p1}
             </p>
 
@@ -123,7 +123,7 @@ export default function SeccionNosotros() {
               </div>
               <div>
                 <p className="text-primary font-semibold text-sm mb-1">{n.artLabel}</p>
-                <p className="text-ink/65 text-[15px] leading-[1.8]">{n.p2}</p>
+                <p className="text-gray-600 text-[15px] leading-[1.8]">{n.p2}</p>
               </div>
             </div>
 

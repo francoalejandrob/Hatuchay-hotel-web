@@ -13,7 +13,7 @@ export default function SeccionUbicacion() {
               En el corazón de Cajamarca
             </h2>
             <div className="divider-gold" />
-            <p className="text-ink/60 mt-4 mb-8 leading-relaxed">
+            <p className="text-gray-500 mt-4 mb-8 leading-relaxed">
               Estratégicamente ubicados en el centro histórico de Cajamarca, a solo 2 cuadras de la Plaza de Armas. Todos los atractivos turísticos principales están a pocos minutos a pie o en auto.
             </p>
 
@@ -24,7 +24,7 @@ export default function SeccionUbicacion() {
                 </div>
                 <div>
                   <p className="font-semibold text-primary text-sm">Dirección</p>
-                  <p className="text-ink/60 text-sm">{HOTEL.direccion}</p>
+                  <p className="text-gray-500 text-sm">{HOTEL.direccion}</p>
                 </div>
               </div>
 
@@ -34,8 +34,8 @@ export default function SeccionUbicacion() {
                 </div>
                 <div>
                   <p className="font-semibold text-primary text-sm">Horarios</p>
-                  <p className="text-ink/60 text-sm">Check-in desde las {HOTEL.checkIn} · Check-out hasta las {HOTEL.checkOut}</p>
-                  <p className="text-ink/60 text-sm">Recepción abierta 24 horas</p>
+                  <p className="text-gray-500 text-sm">Check-in desde las {HOTEL.checkIn} · Check-out hasta las {HOTEL.checkOut}</p>
+                  <p className="text-gray-500 text-sm">Recepción abierta 24 horas</p>
                 </div>
               </div>
 
@@ -45,10 +45,10 @@ export default function SeccionUbicacion() {
                 </div>
                 <div>
                   <p className="font-semibold text-primary text-sm">Contacto</p>
-                  <a href={`tel:${HOTEL.telefono}`} className="text-ink/60 text-sm hover:text-secondary transition-colors block">
+                  <a href={`tel:${HOTEL.telefono}`} className="text-gray-500 text-sm hover:text-secondary transition-colors block">
                     {HOTEL.telefono}
                   </a>
-                  <a href={`mailto:${HOTEL.email}`} className="text-ink/60 text-sm hover:text-secondary transition-colors block">
+                  <a href={`mailto:${HOTEL.email}`} className="text-gray-500 text-sm hover:text-secondary transition-colors block">
                     {HOTEL.email}
                   </a>
                 </div>
