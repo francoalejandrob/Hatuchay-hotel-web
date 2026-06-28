@@ -117,7 +117,12 @@ export default function HabitacionesAdminPage() {
     const file = e.target.files[0]
     setUploadingPhoto(true)
 
-    const path = `${form.codigo}/${Date.now()}-${file.name.replace(/\s+/g, '-')}`
+    const safeName = file.name
+      .normalize('NFD').replace(/[̀-ͯ]/g, '') // quita tildes: á→a, ñ→n, etc.
+      .replace(/[^a-zA-Z0-9._-]/g, '-')                 // reemplaza cualquier otro carácter especial
+      .replace(/-+/g, '-')                               // colapsa guiones múltiples
+      .toLowerCase()
+    const path = `${form.codigo}/${Date.now()}-${safeName}`
     const fd = new FormData()
     fd.append('file', file)
     fd.append('bucket', 'habitaciones')
